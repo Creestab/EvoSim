@@ -69,10 +69,10 @@ public class Creature {
 	}
 
 	public int geneToSeed(String genes){
-		return (int)(((((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
+		return (int)(((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
 				* ((((sumString(genes) / genes.length())+ 1)^ 2) 
 						/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-				+ productString(genes)) % 350) + 1);
+				+ productString(genes));
 	}
 
 	public String geneGen(int length){
@@ -239,5 +239,54 @@ public class Creature {
 		}
 
 		return prod;
+	}
+	
+	public String getGeneticCode(){
+		return geneticCode;
+	}
+	
+	public String getGeneticCodeFormatted(){
+		String form = "[";
+		for(int i = 0; i < geneticCode.length(); i++){
+			form += geneticCode.substring(i, i + 1);
+			if((i + 1) % geneSize == 0) form += "][";
+		}
+		return form + "]";
+	}
+	
+	public String getNutrition(){
+		return nutrition;
+	}
+	
+	public byte getGeneSize(){
+		return geneSize;
+	}
+	
+	public int getGeneComplexity(){
+		return geneComplexity;
+	}
+	
+	public int getLevel(){
+		return level;
+	}
+	
+	public int getXP(){
+		return xpCurrent;
+	}
+	
+	public int getDigestPower(){
+		return digestPower;
+	}
+	
+	public int getHungerMax(){
+		return hungerMax;
+	}
+	
+	public int getHungerCurrent(){
+		return hungerCurrent;
+	}
+	
+	public int getHungerRate(){
+		return hungerRate;
 	}
 }
