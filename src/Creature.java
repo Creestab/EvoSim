@@ -9,32 +9,63 @@
  */
 public class Creature {
 	protected String geneticCode;
-	protected char[] nutrition;
-	protected short level;
+	protected String nutrition;
+	protected int level;
 	protected int xpCurrent;
 	protected int xpUntillLevel;
-	protected short geneComplexity;
+	protected int geneComplexity;
 	protected byte geneSize;
-	protected short digestPower;
-	protected short hungerCurrent;
-	protected short hungerRate;
+	protected int digestPower;
+	protected int hungerMax;
+	protected int hungerCurrent;
+	protected int hungerRate;
 
 	public Creature(){
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 1);
 		geneticCode = geneGen(geneSize);
-		nutrition = new char[] {eleGen(geneToSeed(geneticCode))};
-
+		nutrition = "" + eleGen(geneToSeed(geneticCode));
+		level = 1;
+		xpCurrent = 0;
+		xpUntillLevel = xpCurve(level);
+		digestPower = 1;
+		hungerMax = 10;
+		hungerCurrent = hungerMax;
+		hungerRate = 1;
 	}
-	public Creature(short complex, byte size){
-
+	public Creature(int complex, byte size){
+		level = 1;
+		xpCurrent = 0;
+		xpUntillLevel = xpCurve(level);
+		digestPower = 1;
+		hungerMax = 10;
+		hungerCurrent = hungerMax;
+		hungerRate = 1;
+		
+		geneComplexity = complex;
+		geneSize = size;
+		
+		geneticCode = geneGen(size ^ complex);
+		
+		nutrition = "";
+		char cur;
+		int failsafe;
+		for(int i = 0; i < geneComplexity; i++){
+			cur = eleGen(geneToSeed(geneticCode));
+			while(nutrition.indexOf(cur) != -1){
+				failsafe = 0;
+				cur = eleGen(geneToSeed(geneticCode + cur) + failsafe);
+				failsafe++;
+			}
+			nutrition += cur;
+		}
 	}
 	public Creature(String parent1, String parent2){
 
 	}
 
-	public short geneToSeed(String genes){
-		return (short)(((((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
+	public int geneToSeed(String genes){
+		return (int)(((((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
 							* ((((sumString(genes) / genes.length())+ 1)^ 2) 
 							/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
 							+ productString(genes)) % 350) + 1);
@@ -51,7 +82,7 @@ public class Creature {
 	}
 
 	public char eleGen(){
-		short rand = (short)((Math.random() * 351));
+		int rand = (int)(Math.random() * 351);
 
 		if(rand < 26) return 'A';		//26
 		else if(rand < 51) return 'B';	//25
@@ -84,8 +115,8 @@ public class Creature {
 		}
 	}
 
-	public char eleGen(short seed){
-		seed = (short)(seed % 351);
+	public char eleGen(int seed){
+		seed = (int)(seed % 351);
 
 		if(seed < 26) return 'A';		//26
 		else if(seed < 51) return 'B';	//25
@@ -116,6 +147,10 @@ public class Creature {
 		else{
 			return '?';
 		}
+	}
+	
+	public int xpCurve(int lvl){
+		return (5000 * (1.03 ^ lvl)) -5050;
 	}
 	
 	public int sumString(String s){
