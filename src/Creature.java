@@ -10,11 +10,11 @@
 public class Creature {
 	protected String geneticCode;
 	protected String nutrition;
+	protected byte geneSize;
+	protected int geneComplexity;
 	protected int level;
 	protected int xpCurrent;
 	protected int xpUntillLevel;
-	protected int geneComplexity;
-	protected byte geneSize;
 	protected int digestPower;
 	protected int hungerMax;
 	protected int hungerCurrent;
@@ -41,34 +41,38 @@ public class Creature {
 		hungerMax = 10;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
-		
+
 		geneComplexity = complex;
 		geneSize = size;
-		
+
 		geneticCode = geneGen(size ^ complex);
-		
+
 		nutrition = "";
-		char cur;
-		int failsafe;
 		for(int i = 0; i < geneComplexity; i++){
-			cur = eleGen(geneToSeed(geneticCode));
-			while(nutrition.indexOf(cur) != -1){
-				failsafe = 0;
-				cur = eleGen(geneToSeed(geneticCode + cur) + failsafe);
-				failsafe++;
-			}
-			nutrition += cur;
+			nutrition = addDiet(geneticCode, nutrition);
 		}
 	}
 	public Creature(String parent1, String parent2){
 
 	}
 
+	public String addDiet(String genes, String diet){
+		char cur = eleGen(geneToSeed(genes));
+		if(diet.indexOf(cur) == -1) return nutrition += cur;
+		else return nutrition;
+		/*int failsafe;
+		  while(diet.indexOf(cur) != -1){
+			failsafe = 0;
+			cur = eleGen(geneToSeed(genes + cur) + failsafe);
+			failsafe++;
+		}*/
+	}
+
 	public int geneToSeed(String genes){
 		return (int)(((((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
-							* ((((sumString(genes) / genes.length())+ 1)^ 2) 
-							/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-							+ productString(genes)) % 350) + 1);
+				* ((((sumString(genes) / genes.length())+ 1)^ 2) 
+						/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
+				+ productString(genes)) % 350) + 1);
 	}
 
 	public String geneGen(int length){
@@ -148,19 +152,19 @@ public class Creature {
 			return '?';
 		}
 	}
-	
+
 	public int xpCurve(int lvl){
-		return (5000 * (1.03 ^ lvl)) -5050;
+		return ((int)(5000 * Math.pow(1.03, lvl))) -5050;
 	}
-	
+
 	public int sumString(String s){
 		int sum = 0;
-		
+
 		int length = s.length();
 		char cur;
 		for(int i = 0; i < length; i++){
 			cur = s.charAt(i);
-			
+
 			if(cur == 'A') sum += 1;		
 			else if(cur == 'B') sum += 2;	
 			else if(cur == 'C') sum += 3;
@@ -191,18 +195,18 @@ public class Creature {
 				return '?';
 			}
 		}
-		
+
 		return sum;
 	}
-	
+
 	public int productString(String s){
 		int prod = 0;
-		
+
 		int length = s.length();
 		char cur;
 		for(int i = 0; i < length; i++){
 			cur = s.charAt(i);
-			
+
 			if(cur == 'A') prod *= 1;		
 			else if(cur == 'B') prod *= 2;	
 			else if(cur == 'C') prod *= 3;
@@ -233,7 +237,7 @@ public class Creature {
 				return '?';
 			}
 		}
-		
+
 		return prod;
 	}
 }
