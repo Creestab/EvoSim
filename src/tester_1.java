@@ -7,7 +7,7 @@
  * @version 0.0.1
  * @date 11/5/17
  */
-public class tester {
+public class tester_1 {
 
 	/**
 	 * @param args

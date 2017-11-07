@@ -63,10 +63,10 @@ public class Creature {
 	}
 
 	public int geneToSeed(String genes){
-		return (int)(((Math.sqrt(Math.pow(2, sumString(genes) / (genes.length() + 1)))) 
+		return (int)Math.pow((((Math.sqrt(Math.pow(2, sumString(genes) / (genes.length() + 1)))) 
 					* ((Math.pow((sumString(genes) / genes.length())+ 1, 2)) 
 					/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-					+ productString(genes));
+					+ productString(genes)), .8);
 	}
 
 	public String geneGen(int length){
