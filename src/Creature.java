@@ -22,7 +22,7 @@ public class Creature {
 
 	public Creature(){
 		geneComplexity = 1;
-		geneSize = (byte)((Math.random() * 3) + 1);
+		geneSize = (byte)((Math.random() * 3) + 2);
 		geneticCode = geneGen(geneSize);
 		nutrition = "" + eleGen(geneToSeed(geneticCode));
 		level = 1;
@@ -44,11 +44,11 @@ public class Creature {
 
 		geneComplexity = complex;
 		geneSize = size;
+		geneticCode = geneGen(geneSize);
+		nutrition = "" + eleGen(geneToSeed(geneticCode));
 
-		geneticCode = geneGen(size ^ complex);
-
-		nutrition = "";
-		for(int i = 0; i < geneComplexity; i++){
+		for(int i = 1; i < geneComplexity; i++){
+			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
 	}
@@ -58,21 +58,15 @@ public class Creature {
 
 	public String addDiet(String genes, String diet){
 		char cur = eleGen(geneToSeed(genes));
-		if(diet.indexOf(cur) == -1) return nutrition += cur;
-		else return nutrition;
-		/*int failsafe;
-		  while(diet.indexOf(cur) != -1){
-			failsafe = 0;
-			cur = eleGen(geneToSeed(genes + cur) + failsafe);
-			failsafe++;
-		}*/
+		if(diet.indexOf(cur) == -1) return diet + cur;
+		else return diet;
 	}
 
 	public int geneToSeed(String genes){
-		return (int)(((Math.sqrt(2 ^ (sumString(genes) / (genes.length() + 1)))) 
-				* ((((sumString(genes) / genes.length())+ 1)^ 2) 
-						/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-				+ productString(genes));
+		return (int)(((Math.sqrt(Math.pow(2, sumString(genes) / (genes.length() + 1)))) 
+					* ((Math.pow((sumString(genes) / genes.length())+ 1, 2)) 
+					/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
+					+ productString(genes));
 	}
 
 	public String geneGen(int length){
