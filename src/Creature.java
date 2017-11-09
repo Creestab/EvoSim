@@ -66,7 +66,7 @@ public class Creature {
 		return (int)Math.pow((((Math.sqrt(Math.pow(2, sumString(genes) / (genes.length() + 1)))) 
 					* ((Math.pow((sumString(genes) / genes.length())+ 1, 2)) 
 					/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-					+ productString(genes)), .8);
+					+ productString(genes)), .95);
 	}
 
 	public String geneGen(int length){
