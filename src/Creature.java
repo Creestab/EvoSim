@@ -19,6 +19,9 @@ public class Creature {
 	protected int hungerMax;
 	protected int hungerCurrent;
 	protected int hungerRate;
+	protected int ageCurrent;
+	protected int ageMax;
+	
 
 	public Creature(){
 		geneComplexity = 1;
@@ -32,6 +35,8 @@ public class Creature {
 		hungerMax = 10;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
+		ageCurrent = 1;
+		ageMax = (sumString(geneticCode) / 3) + 1;
 	}
 	public Creature(int complex, byte size){
 		level = 1;
@@ -51,9 +56,52 @@ public class Creature {
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
+		
+		ageCurrent = 1;
+		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+					- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
 	public Creature(String parent1, String parent2){
 
+	}
+	
+	public void eat(String preyGenes, int preyComplexity){
+		int l = preyGenes.length();
+		for(int i = 0; i < l; i++){
+			char ele = preyGenes.charAt(i);
+			if(nutrition.indexOf(ele) != -1){
+				double modifier = 1;
+				if(geneComplexity < preyComplexity) modifier = 1 / (Math.pow(2, preyComplexity - geneComplexity));
+				
+				if(ele == 'A') hungerCurrent += 1 * modifier;		
+				else if(ele == 'B') hungerCurrent += 2 * modifier;	
+				else if(ele == 'C') hungerCurrent += 3 * modifier;	
+				else if(ele == 'D') hungerCurrent += 4 * modifier;	
+				else if(ele == 'E') hungerCurrent += 5 * modifier;	
+				else if(ele == 'F') hungerCurrent += 6 * modifier;
+				else if(ele == 'G') hungerCurrent += 7 * modifier;
+				else if(ele == 'H') hungerCurrent += 8 * modifier;
+				else if(ele == 'I') hungerCurrent += 9 * modifier;
+				else if(ele == 'J') hungerCurrent += 10 * modifier;
+				else if(ele == 'K') hungerCurrent += 11 * modifier;
+				else if(ele == 'L') hungerCurrent += 12 * modifier;
+				else if(ele == 'M') hungerCurrent += 13 * modifier;
+				else if(ele == 'N') hungerCurrent += 14 * modifier;
+				else if(ele == 'O') hungerCurrent += 15 * modifier;
+				else if(ele == 'P') hungerCurrent += 16 * modifier;
+				else if(ele == 'Q') hungerCurrent += 17 * modifier;
+				else if(ele == 'R') hungerCurrent += 18 * modifier;
+				else if(ele == 'S') hungerCurrent += 19 * modifier;
+				else if(ele == 'T') hungerCurrent += 20 * modifier;
+				else if(ele == 'U') hungerCurrent += 21 * modifier;
+				else if(ele == 'V') hungerCurrent += 22 * modifier;
+				else if(ele == 'W') hungerCurrent += 23 * modifier;
+				else if(ele == 'X') hungerCurrent += 24 * modifier;
+				else if(ele == 'Y') hungerCurrent += 25 * modifier;
+				else if(ele == 'Z') hungerCurrent += 26 * modifier;
+			}
+			if(hungerCurrent > hungerMax) hungerCurrent = hungerMax;
+		}
 	}
 
 	public String addDiet(String genes, String diet){
@@ -279,5 +327,13 @@ public class Creature {
 	
 	public int getHungerRate(){
 		return hungerRate;
+	}
+	
+	public int getAgeMax(){
+		return ageMax;
+	}
+	
+	public int getAgeCurrent(){
+		return ageCurrent;
 	}
 }

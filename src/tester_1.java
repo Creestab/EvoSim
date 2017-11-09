@@ -13,7 +13,7 @@ public class tester_1 {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Creature c1 = new Creature();
+		Creature c1 = new Creature(1, (byte)2);
 		Creature c2 = new Creature(2,(byte)2);
 		Creature c3 = new Creature(2, (byte)3);
 		Creature c4 = new Creature(3, (byte)2);
@@ -32,6 +32,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c1.getHungerMax());
 		System.out.println("Current Hunger: " + c1.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c1.getHungerRate());
+		System.out.println("Max Age: " + c1.getAgeMax());
+		System.out.println("Current Age: " + c1.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c2.getGeneComplexity());
@@ -45,6 +47,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c2.getHungerMax());
 		System.out.println("Current Hunger: " + c2.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c2.getHungerRate());
+		System.out.println("Max Age: " + c2.getAgeMax());
+		System.out.println("Current Age: " + c2.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c3.getGeneComplexity());
@@ -58,6 +62,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c3.getHungerMax());
 		System.out.println("Current Hunger: " + c3.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c3.getHungerRate());
+		System.out.println("Max Age: " + c3.getAgeMax());
+		System.out.println("Current Age: " + c3.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c4.getGeneComplexity());
@@ -71,6 +77,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c4.getHungerMax());
 		System.out.println("Current Hunger: " + c4.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c4.getHungerRate());
+		System.out.println("Max Age: " + c4.getAgeMax());
+		System.out.println("Current Age: " + c4.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c5.getGeneComplexity());
@@ -84,6 +92,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c5.getHungerMax());
 		System.out.println("Current Hunger: " + c5.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c5.getHungerRate());
+		System.out.println("Max Age: " + c5.getAgeMax());
+		System.out.println("Current Age: " + c5.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c6.getGeneComplexity());
@@ -97,6 +107,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c6.getHungerMax());
 		System.out.println("Current Hunger: " + c6.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c6.getHungerRate());
+		System.out.println("Max Age: " + c6.getAgeMax());
+		System.out.println("Current Age: " + c6.getAgeCurrent());
 		System.out.println("");
 		
 		System.out.println("Complexity: " + c7.getGeneComplexity());
@@ -110,6 +122,8 @@ public class tester_1 {
 		System.out.println("Max Hunger: " + c7.getHungerMax());
 		System.out.println("Current Hunger: " + c7.getHungerCurrent());
 		System.out.println("Hunger Rate: " + c7.getHungerRate());
+		System.out.println("Max Age: " + c7.getAgeMax());
+		System.out.println("Current Age: " + c7.getAgeCurrent());
 		System.out.println("");
 	}
 }
