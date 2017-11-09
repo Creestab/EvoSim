@@ -8,10 +8,10 @@
  * @date 11/5/17
  */
 public class Creature {
-	protected String geneticCode;
-	protected String nutrition;
 	protected byte geneSize;
 	protected int geneComplexity;
+	protected String geneticCode;
+	protected String nutrition;
 	protected int level;
 	protected int xpCurrent;
 	protected int xpUntilLevel;
@@ -19,9 +19,8 @@ public class Creature {
 	protected int hungerMax;
 	protected double hungerCurrent;
 	protected double hungerRate;
-	protected int ageCurrent;
 	protected int ageMax;
-	
+	protected int ageCurrent;
 
 	public Creature(){
 		geneComplexity = 1;
@@ -50,16 +49,16 @@ public class Creature {
 		geneComplexity = complex;
 		geneSize = (byte)size;
 		geneticCode = geneGen(geneSize);
-		
+
 		nutrition = "" + eleGen(geneToSeed(geneticCode));
 		for(int i = 1; i < geneComplexity; i++){
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
-		
+
 		ageCurrent = 1;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-					- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
 	public Creature(String genes, int complex, int size){
 		level = 1;
@@ -73,67 +72,72 @@ public class Creature {
 		geneComplexity = complex;
 		geneSize = (byte)size;
 		geneticCode = genes;
-		
+
 		nutrition = "" + eleGen(geneToSeed(geneticCode));
 		for(int i = 1; i < geneComplexity; i++){
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
-		
+
 		ageCurrent = 1;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-					- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
 	public Creature(String parent1, String parent2){
 
 	}
-	
+
 	public void tick(){
 		if(xpCurrent >= xpUntilLevel) levelUp();
 		hungerCurrent -= hungerRate;
 		ageCurrent++;
 	}
-	
+
 	public void eat(String preyGenes, int preyComplexity){
 		int nutrients = 0;
 		int l = preyGenes.length();
 		for(int i = 0; i < l; i++){
 			char ele = preyGenes.charAt(i);
 			if(nutrition.indexOf(ele) != -1){
-				double modifier = 1;
-				if(digestPower < preyComplexity) modifier = 1 / (Math.pow(2, preyComplexity - digestPower));
-				
-				if(ele == 'A') nutrients += 1 * modifier;		
-				else if(ele == 'B') nutrients += 2 * modifier;	
-				else if(ele == 'C') nutrients += 3 * modifier;	
-				else if(ele == 'D') nutrients += 4 * modifier;	
-				else if(ele == 'E') nutrients += 5 * modifier;	
-				else if(ele == 'F') nutrients += 6 * modifier;
-				else if(ele == 'G') nutrients += 7 * modifier;
-				else if(ele == 'H') nutrients += 8 * modifier;
-				else if(ele == 'I') nutrients += 9 * modifier;
-				else if(ele == 'J') nutrients += 10 * modifier;
-				else if(ele == 'K') nutrients += 11 * modifier;
-				else if(ele == 'L') nutrients += 12 * modifier;
-				else if(ele == 'M') nutrients += 13 * modifier;
-				else if(ele == 'N') nutrients += 14 * modifier;
-				else if(ele == 'O') nutrients += 15 * modifier;
-				else if(ele == 'P') nutrients += 16 * modifier;
-				else if(ele == 'Q') nutrients += 17 * modifier;
-				else if(ele == 'R') nutrients += 18 * modifier;
-				else if(ele == 'S') nutrients += 19 * modifier;
-				else if(ele == 'T') nutrients += 20 * modifier;
-				else if(ele == 'U') nutrients += 21 * modifier;
-				else if(ele == 'V') nutrients += 22 * modifier;
-				else if(ele == 'W') nutrients += 23 * modifier;
-				else if(ele == 'X') nutrients += 24 * modifier;
-				else if(ele == 'Y') nutrients += 25 * modifier;
-				else if(ele == 'Z') nutrients += 26 * modifier;
+				if(ele == 'A') nutrients += 1;	
+				else if(ele == 'B') nutrients += 2;	
+				else if(ele == 'C') nutrients += 3;	
+				else if(ele == 'D') nutrients += 4;	
+				else if(ele == 'E') nutrients += 5;	
+				else if(ele == 'F') nutrients += 6;
+				else if(ele == 'G') nutrients += 7;
+				else if(ele == 'H') nutrients += 8;
+				else if(ele == 'I') nutrients += 9;
+				else if(ele == 'J') nutrients += 10;
+				else if(ele == 'K') nutrients += 11;
+				else if(ele == 'L') nutrients += 12;
+				else if(ele == 'M') nutrients += 13;
+				else if(ele == 'N') nutrients += 14;
+				else if(ele == 'O') nutrients += 15;
+				else if(ele == 'P') nutrients += 16;
+				else if(ele == 'Q') nutrients += 17;
+				else if(ele == 'R') nutrients += 18;
+				else if(ele == 'S') nutrients += 19;
+				else if(ele == 'T') nutrients += 20;
+				else if(ele == 'U') nutrients += 21;
+				else if(ele == 'V') nutrients += 22;
+				else if(ele == 'W') nutrients += 23;
+				else if(ele == 'X') nutrients += 24;
+				else if(ele == 'Y') nutrients += 25;
+				else if(ele == 'Z') nutrients += 26;
 			}
+		}
+		if(digestPower < preyComplexity){
+			hungerCurrent += nutrients * (1 / (Math.pow(2, preyComplexity - digestPower)));
+			if(hungerCurrent > hungerMax) hungerCurrent = hungerMax;
+
+			xpCurrent += Math.ceil((nutrients * (Math.floor(preyComplexity / level) + 1) * 10) * (1 / (Math.pow(2, preyComplexity - digestPower))));
+		}
+		else{
 			hungerCurrent += nutrients;
 			if(hungerCurrent > hungerMax) hungerCurrent = hungerMax;
-			
-			xpCurrent += nutrients * (preyComplexity + 1);
+
+			xpCurrent += nutrients * (preyComplexity + 1) * 10;
 		}
 	}
 
@@ -224,14 +228,14 @@ public class Creature {
 			return '?';
 		}
 	}
-	
+
 	public void levelUp()
 	{
 		level++;
 		xpUntilLevel = xpCurve(level + 1);
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
-		
+
 		if(geneToSeed(geneticCode) % 5 == 0) digestPower++;
 		if(geneToSeed(geneticCode) % 5 == 1) hungerMax++;
 		if(geneToSeed(geneticCode) % 5 == 2) hungerRate -= .1;
@@ -241,7 +245,7 @@ public class Creature {
 			geneticCode += geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());
 		}
 	}
-	
+
 	public void xpGain(int gain){
 		xpCurrent += gain;
 	}
@@ -333,11 +337,11 @@ public class Creature {
 
 		return prod;
 	}
-	
+
 	public String getGeneticCode(){
 		return geneticCode;
 	}
-	
+
 	public String getGeneticCodeFormatted(){
 		String form = "[";
 		for(int i = 0; i < geneticCode.length(); i++){
@@ -346,48 +350,80 @@ public class Creature {
 		}
 		return form + "]";
 	}
-	
+
 	public String getNutrition(){
 		return nutrition;
 	}
-	
+
 	public byte getGeneSize(){
 		return geneSize;
 	}
-	
+
 	public int getGeneComplexity(){
 		return geneComplexity;
 	}
-	
+
 	public int getLevel(){
 		return level;
 	}
-	
+
 	public int getXP(){
 		return xpCurrent;
 	}
-	
+
 	public int getDigestPower(){
 		return digestPower;
 	}
-	
+
 	public int getHungerMax(){
 		return hungerMax;
 	}
-	
+
 	public double getHungerCurrent(){
 		return hungerCurrent;
 	}
-	
+
 	public double getHungerRate(){
 		return hungerRate;
 	}
-	
+
 	public int getAgeMax(){
 		return ageMax;
 	}
-	
+
 	public int getAgeCurrent(){
 		return ageCurrent;
+	}
+
+	public void print(){
+		System.out.println("Genetic Code: " + getGeneticCodeFormatted());
+		System.out.println("Gene Size: " + geneSize);
+		System.out.println("Code Complexity: " + geneComplexity);
+		System.out.println("Level: " + level);
+		System.out.println("Total XP: " + xpCurrent);
+		System.out.println("XP until Next Level: " + xpUntilLevel);
+		System.out.println("Diet: " + nutrition);
+		System.out.println("Digestion Power: " + digestPower);
+		System.out.println("Current Hunger: " + hungerCurrent);
+		System.out.println("Hunger when Full: " + hungerMax);
+		System.out.println("Rate of Hunger: " + hungerRate);
+		System.out.println("Current Age: " + ageCurrent);
+		System.out.println("Age of Death: " + ageMax);
+	}
+
+	public String toString(){
+		return 	"geneSize: " + geneSize + '\n' +
+				"geneComplexity: " + geneComplexity + '\n' +
+				"geneticCode: " + geneticCode + '\n' +
+				"nutrition: " + nutrition + '\n' +
+				"level: " + level + '\n' +
+				"xpCurrent: " + xpCurrent + '\n' +
+				"xpUntilLevel: " + xpUntilLevel + '\n' +
+				"digestPower: " + digestPower + '\n' +
+				"hungerMax: " + hungerMax + '\n' + 
+				"hungerCurrent: " + hungerMax + '\n' +
+				"hungerRate: " + hungerRate + '\n' +
+				"ageMax: " + ageMax + '\n' +
+				"ageCurrent: " + ageCurrent + '\n';
 	}
 }
