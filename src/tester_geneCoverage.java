@@ -8,27 +8,27 @@
  * @date 11/5/17
  */
 
-public class tester_dietCoverage {
+public class tester_geneCoverage {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String diet = "";
+		String genes = "";
 		int[] eleCount = new int[26];
 		
 		Creature c;
-		String cDiet = "";
+		String cGenes = "";
 		int l = 0;
 		char ele = '?';
 		int creatures = 0;
-		while(/*(diet.length() < 26) && */(creatures < 100000)){
+		while(/*(genes.length() < 26) && */(creatures < 100000)){
 			c = new Creature((int)(Math.random() * 3) + 1, (byte)((Math.random() * 4) + 1));
-			cDiet = c.getNutrition();
-			l = cDiet.length();
+			cGenes = c.getGeneticCode();
+			l = cGenes.length();
 			for(int i = 0; i < l; i++){
-				ele = cDiet.charAt(i);
-				if(diet.indexOf(ele) == -1) diet += ele;
+				ele = cGenes.charAt(i);
+				if(genes.indexOf(ele) == -1) genes += ele;
 				
 				if(ele == 'A') eleCount[0] += 1;		
 				else if(ele == 'B') eleCount[1] += 1;	
@@ -69,4 +69,5 @@ public class tester_dietCoverage {
 			System.out.println(letters.charAt(i) + ": " + eleCount[i]);
 		}
 	}
+
 }

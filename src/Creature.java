@@ -63,10 +63,7 @@ public class Creature {
 	}
 
 	public int geneToSeed(String genes){
-		return (int)Math.pow((((Math.sqrt(Math.pow(2, sumString(genes) / (genes.length() + 1)))) 
-					* ((Math.pow((sumString(genes) / genes.length())+ 1, 2)) 
-					/ (3 * (sumString(genes) / (genes.length() - 1))) + 10))
-					+ productString(genes)), .95);
+		return (int)(Math.pow(productString(genes), (sumString(genes) % 11)) + sumString(genes));
 	}
 
 	public String geneGen(int length){
@@ -104,7 +101,7 @@ public class Creature {
 		else if(rand < 330) return 'T'; //7
 		else if(rand < 336) return 'U'; //6
 		else if(rand < 341) return 'V'; //5
-		else if(rand < 245) return 'W'; //4
+		else if(rand < 345) return 'W'; //4
 		else if(rand < 348) return 'X'; //3
 		else if(rand < 350) return 'Y'; //2
 		else if(rand < 351) return 'Z'; //1
@@ -138,7 +135,7 @@ public class Creature {
 		else if(seed < 330) return 'T'; //7
 		else if(seed < 336) return 'U'; //6
 		else if(seed < 341) return 'V'; //5
-		else if(seed < 245) return 'W'; //4
+		else if(seed < 345) return 'W'; //4
 		else if(seed < 348) return 'X'; //3
 		else if(seed < 350) return 'Y'; //2
 		else if(seed < 351) return 'Z'; //1
