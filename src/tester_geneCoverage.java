@@ -23,7 +23,7 @@ public class tester_geneCoverage {
 		char ele = '?';
 		int creatures = 0;
 		while(/*(genes.length() < 26) && */(creatures < 100000)){
-			c = new Creature((int)(Math.random() * 3) + 1, (byte)((Math.random() * 4) + 1));
+			c = new Creature((int)(Math.random() * 3) + 1, (int)((Math.random() * 4) + 1));
 			cGenes = c.getGeneticCode();
 			l = cGenes.length();
 			for(int i = 0; i < l; i++){

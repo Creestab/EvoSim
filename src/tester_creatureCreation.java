@@ -7,19 +7,19 @@
  * @version 0.0.1
  * @date 11/5/17
  */
-public class tester_1 {
+public class tester_creatureCreation {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Creature c1 = new Creature(1, (byte)2);
-		Creature c2 = new Creature(2,(byte)2);
-		Creature c3 = new Creature(2, (byte)3);
-		Creature c4 = new Creature(3, (byte)2);
-		Creature c5 = new Creature(2, (byte)4);
-		Creature c6 = new Creature(5, (byte)2);
-		Creature c7 = new Creature(4, (byte)4);
+		Creature c1 = new Creature(1, 2);
+		Creature c2 = new Creature(2, 2);
+		Creature c3 = new Creature(2, 3);
+		Creature c4 = new Creature(3, 2);
+		Creature c5 = new Creature(2, 4);
+		Creature c6 = new Creature(5, 2);
+		Creature c7 = new Creature(4, 4);
 		
 		System.out.println("Complexity: " + c1.getGeneComplexity());
 		System.out.println("Gene Size: " + c1.getGeneSize());

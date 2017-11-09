@@ -23,7 +23,7 @@ public class tester_dietCoverage {
 		char ele = '?';
 		int creatures = 0;
 		while(/*(diet.length() < 26) && */(creatures < 100000)){
-			c = new Creature((int)(Math.random() * 3) + 1, (byte)((Math.random() * 4) + 1));
+			c = new Creature((int)(Math.random() * 3) + 1, (int)((Math.random() * 4) + 1));
 			cDiet = c.getNutrition();
 			l = cDiet.length();
 			for(int i = 0; i < l; i++){

@@ -14,11 +14,11 @@ public class Creature {
 	protected int geneComplexity;
 	protected int level;
 	protected int xpCurrent;
-	protected int xpUntillLevel;
+	protected int xpUntilLevel;
 	protected int digestPower;
 	protected int hungerMax;
-	protected int hungerCurrent;
-	protected int hungerRate;
+	protected double hungerCurrent;
+	protected double hungerRate;
 	protected int ageCurrent;
 	protected int ageMax;
 	
@@ -30,7 +30,7 @@ public class Creature {
 		nutrition = "" + eleGen(geneToSeed(geneticCode));
 		level = 1;
 		xpCurrent = 0;
-		xpUntillLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);
 		digestPower = 1;
 		hungerMax = 10;
 		hungerCurrent = hungerMax;
@@ -38,20 +38,43 @@ public class Creature {
 		ageCurrent = 1;
 		ageMax = (sumString(geneticCode) / 3) + 1;
 	}
-	public Creature(int complex, byte size){
+	public Creature(int complex, int size){
 		level = 1;
 		xpCurrent = 0;
-		xpUntillLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);
 		digestPower = 1;
 		hungerMax = 10;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
 
 		geneComplexity = complex;
-		geneSize = size;
+		geneSize = (byte)size;
 		geneticCode = geneGen(geneSize);
+		
 		nutrition = "" + eleGen(geneToSeed(geneticCode));
+		for(int i = 1; i < geneComplexity; i++){
+			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
+			nutrition = addDiet(geneticCode, nutrition);
+		}
+		
+		ageCurrent = 1;
+		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+					- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+	}
+	public Creature(String genes, int complex, int size){
+		level = 1;
+		xpCurrent = 0;
+		xpUntilLevel = xpCurve(level);
+		digestPower = 1;
+		hungerMax = 10;
+		hungerCurrent = hungerMax;
+		hungerRate = 1;
 
+		geneComplexity = complex;
+		geneSize = (byte)size;
+		geneticCode = genes;
+		
+		nutrition = "" + eleGen(geneToSeed(geneticCode));
 		for(int i = 1; i < geneComplexity; i++){
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
@@ -65,42 +88,52 @@ public class Creature {
 
 	}
 	
+	public void tick(){
+		if(xpCurrent >= xpUntilLevel) levelUp();
+		hungerCurrent -= hungerRate;
+		ageCurrent++;
+	}
+	
 	public void eat(String preyGenes, int preyComplexity){
+		int nutrients = 0;
 		int l = preyGenes.length();
 		for(int i = 0; i < l; i++){
 			char ele = preyGenes.charAt(i);
 			if(nutrition.indexOf(ele) != -1){
 				double modifier = 1;
-				if(geneComplexity < preyComplexity) modifier = 1 / (Math.pow(2, preyComplexity - geneComplexity));
+				if(digestPower < preyComplexity) modifier = 1 / (Math.pow(2, preyComplexity - digestPower));
 				
-				if(ele == 'A') hungerCurrent += 1 * modifier;		
-				else if(ele == 'B') hungerCurrent += 2 * modifier;	
-				else if(ele == 'C') hungerCurrent += 3 * modifier;	
-				else if(ele == 'D') hungerCurrent += 4 * modifier;	
-				else if(ele == 'E') hungerCurrent += 5 * modifier;	
-				else if(ele == 'F') hungerCurrent += 6 * modifier;
-				else if(ele == 'G') hungerCurrent += 7 * modifier;
-				else if(ele == 'H') hungerCurrent += 8 * modifier;
-				else if(ele == 'I') hungerCurrent += 9 * modifier;
-				else if(ele == 'J') hungerCurrent += 10 * modifier;
-				else if(ele == 'K') hungerCurrent += 11 * modifier;
-				else if(ele == 'L') hungerCurrent += 12 * modifier;
-				else if(ele == 'M') hungerCurrent += 13 * modifier;
-				else if(ele == 'N') hungerCurrent += 14 * modifier;
-				else if(ele == 'O') hungerCurrent += 15 * modifier;
-				else if(ele == 'P') hungerCurrent += 16 * modifier;
-				else if(ele == 'Q') hungerCurrent += 17 * modifier;
-				else if(ele == 'R') hungerCurrent += 18 * modifier;
-				else if(ele == 'S') hungerCurrent += 19 * modifier;
-				else if(ele == 'T') hungerCurrent += 20 * modifier;
-				else if(ele == 'U') hungerCurrent += 21 * modifier;
-				else if(ele == 'V') hungerCurrent += 22 * modifier;
-				else if(ele == 'W') hungerCurrent += 23 * modifier;
-				else if(ele == 'X') hungerCurrent += 24 * modifier;
-				else if(ele == 'Y') hungerCurrent += 25 * modifier;
-				else if(ele == 'Z') hungerCurrent += 26 * modifier;
+				if(ele == 'A') nutrients += 1 * modifier;		
+				else if(ele == 'B') nutrients += 2 * modifier;	
+				else if(ele == 'C') nutrients += 3 * modifier;	
+				else if(ele == 'D') nutrients += 4 * modifier;	
+				else if(ele == 'E') nutrients += 5 * modifier;	
+				else if(ele == 'F') nutrients += 6 * modifier;
+				else if(ele == 'G') nutrients += 7 * modifier;
+				else if(ele == 'H') nutrients += 8 * modifier;
+				else if(ele == 'I') nutrients += 9 * modifier;
+				else if(ele == 'J') nutrients += 10 * modifier;
+				else if(ele == 'K') nutrients += 11 * modifier;
+				else if(ele == 'L') nutrients += 12 * modifier;
+				else if(ele == 'M') nutrients += 13 * modifier;
+				else if(ele == 'N') nutrients += 14 * modifier;
+				else if(ele == 'O') nutrients += 15 * modifier;
+				else if(ele == 'P') nutrients += 16 * modifier;
+				else if(ele == 'Q') nutrients += 17 * modifier;
+				else if(ele == 'R') nutrients += 18 * modifier;
+				else if(ele == 'S') nutrients += 19 * modifier;
+				else if(ele == 'T') nutrients += 20 * modifier;
+				else if(ele == 'U') nutrients += 21 * modifier;
+				else if(ele == 'V') nutrients += 22 * modifier;
+				else if(ele == 'W') nutrients += 23 * modifier;
+				else if(ele == 'X') nutrients += 24 * modifier;
+				else if(ele == 'Y') nutrients += 25 * modifier;
+				else if(ele == 'Z') nutrients += 26 * modifier;
 			}
+			hungerCurrent += nutrients;
 			if(hungerCurrent > hungerMax) hungerCurrent = hungerMax;
+			
+			xpCurrent += nutrients * (preyComplexity + 1);
 		}
 	}
 
@@ -190,6 +223,27 @@ public class Creature {
 		else{
 			return '?';
 		}
+	}
+	
+	public void levelUp()
+	{
+		level++;
+		xpUntilLevel = xpCurve(level + 1);
+		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+		
+		if(geneToSeed(geneticCode) % 5 == 0) digestPower++;
+		if(geneToSeed(geneticCode) % 5 == 1) hungerMax++;
+		if(geneToSeed(geneticCode) % 5 == 2) hungerRate -= .1;
+		if(geneToSeed(geneticCode) % 5 == 3) addDiet(geneticCode, nutrition);
+		if(geneToSeed(geneticCode) % 5 == 4) {
+			geneComplexity++;
+			geneticCode += geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());
+		}
+	}
+	
+	public void xpGain(int gain){
+		xpCurrent += gain;
 	}
 
 	public int xpCurve(int lvl){
@@ -321,11 +375,11 @@ public class Creature {
 		return hungerMax;
 	}
 	
-	public int getHungerCurrent(){
+	public double getHungerCurrent(){
 		return hungerCurrent;
 	}
 	
-	public int getHungerRate(){
+	public double getHungerRate(){
 		return hungerRate;
 	}
 	
