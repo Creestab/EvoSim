@@ -24,6 +24,9 @@ public class Creature {
 	protected int ageMax;
 	protected int ageCurrent;
 
+	/**
+	 * The default constructor. Creates a level 1 Creature with a gene complexity of 1 and a random size and code.
+	 */
 	public Creature(){
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 2);
@@ -39,6 +42,11 @@ public class Creature {
 		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 3) + 1;
 	}
+	/**
+	 * Creates a level 1 Creature with a defined gene complexity and size but a random code.
+	 * @param complex this Creatures geneComplexity.
+	 * @param size this Creatures geneSize.
+	 */
 	public Creature(int complex, int size){
 		level = 1;
 		xpCurrent = 0;
@@ -63,6 +71,12 @@ public class Creature {
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
+	/**
+	 * Creates a level 1 Creature with a defined gene code, complexity, and size.
+	 * @param genes this Creatures geneticCode.
+	 * @param complex this Creatures geneComplexity.
+	 * @param size this Creatures geneSize.
+	 */
 	public Creature(String genes, int complex, int size){
 		level = 1;
 		xpCurrent = 0;
@@ -87,6 +101,11 @@ public class Creature {
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
+	/**
+	 * Creates a level 1 Creature based off the genetics and stats of two other Creatures. Used for breeding.
+	 * @param p1 one of the Creatures used to create this Creature.
+	 * @param p2 the other Creature used to create this Creature.
+	 */
 	public Creature(Creature p1, Creature p2){
 		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel()));
 		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
@@ -147,12 +166,20 @@ public class Creature {
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
 
+	/**
+	 * Updates some basic stats for each step in the simulation. Should be done for each Creature at the beginning of each step.
+	 */
 	public void tick(){
 		if(xpCurrent >= xpUntilLevel) levelUp();
 		hungerCurrent -= hungerRate;
 		ageCurrent++;
 	}
-
+	
+	/**
+	 * This Creature eats the other Creature. NOTE: this function does not effect the eaten Creature object, removing from your Creature array is advised.
+	 * @param preyGenes the geneticCode of the Creature getting eaten.
+	 * @param preyComplexity the geneComplexity of the Creature getting eaten.
+	 */
 	public void eat(String preyGenes, int preyComplexity){
 		int nutrients = 0;
 		int l = preyGenes.length();
@@ -201,6 +228,11 @@ public class Creature {
 		}
 	}
 
+	/**
+	 * Generates a genetic code of a defined length.
+	 * @param length the number of elements in this genetic code.
+	 * @return the genetic code.
+	 */
 	public String geneGen(int length){
 		String gene = "";
 
@@ -211,16 +243,39 @@ public class Creature {
 		return gene;
 	}
 
+	/**
+	 * Attempts to add a new element into a Creatures nutrition.
+	 * @param genes the Creatures geneticCode.
+	 * @param diet the Creatures nutrition.
+	 * @return the Creatures updated nutrition.
+	 */
 	public String addDiet(String genes, String diet){
 		char cur = eleGen(geneToSeed(genes));
 		if(diet.indexOf(cur) == -1) return diet + cur;
 		else return diet;
 	}
-
+	
+	/**
+	 * Uses this creatures geneticCode to generate a seed.
+	 * @return the seed.
+	 */
+	public int geneToSeed(){
+		return (int)(Math.pow(productString(geneticCode), (sumString(geneticCode) % 11)) + sumString(geneticCode));
+	}
+	
+	/**
+	 * Uses a genetic code to generate a seed.
+	 * @param genes the genetic code used to generate the seed.
+	 * @return the seed.
+	 */
 	public int geneToSeed(String genes){
 		return (int)(Math.pow(productString(genes), (sumString(genes) % 11)) + sumString(genes));
 	}
 
+	/**
+	 * Generates a random element.
+	 * @return the element.
+	 */
 	public char eleGen(){
 		int rand = (int)(Math.random() * 351);
 
@@ -255,6 +310,11 @@ public class Creature {
 		}
 	}
 
+	/**
+	 * Generates a seeded element.
+	 * @param seed the seed used to generate the element.
+	 * @return the element.
+	 */
 	public char eleGen(int seed){
 		seed = (int)(seed % 351);
 
@@ -289,6 +349,9 @@ public class Creature {
 		}
 	}
 
+	/**
+	 * Used to increase this Creatures level and stats accordingly.
+	 */
 	public void levelUp()
 	{
 		level++;
@@ -306,20 +369,39 @@ public class Creature {
 		}
 	}
 
+	/**
+	 * Increases this Creatures xp by a set amount.
+	 * @param gain the amount to increase this Creatures xp by.
+	 */
 	public void xpGain(int gain){
 		xpCurrent += gain;
 	}
 
+	/**
+	 * Determines the amount of total xp needed to reach a certain level.
+	 * @param lvl the target level.
+	 * @return the amount of xp needed.
+	 */
 	public int xpCurve(int lvl){
 		return ((int)(5000 * Math.pow(1.03, lvl))) -5050;
 	}
 
+	/**
+	 * Sorts the characters of a String.
+	 * @param s the String.
+	 * @return the sorted String.
+	 */
 	public String sortString(String s){
 		char[] sChar = s.toCharArray();
 		Arrays.sort(sChar);
 		return new String(sChar);
 	}
 
+	/**
+	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
+	 * @param s the String
+	 * @return the sum.
+	 */
 	public int sumString(String s){
 		int sum = 0;
 
@@ -362,6 +444,11 @@ public class Creature {
 		return sum;
 	}
 
+	/**
+	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
+	 * @param s the String
+	 * @return the product.
+	 */
 	public int productString(String s){
 		int prod = 0;
 
@@ -408,11 +495,15 @@ public class Creature {
 		return geneticCode;
 	}
 
+	/**
+	 * Returns this Creatures geneticCode seperated into chunks of length geneSize enclosed by brackets.
+	 * @return the geneticCode String parsed into sections inclosed in brackets.
+	 */
 	public String getGeneticCodeFormatted(){
 		String form = "[";
 		for(int i = 0; i < geneticCode.length(); i++){
 			form += geneticCode.substring(i, i + 1);
-			if((i + 1) % geneSize == 0) form += "][";
+			if((i + 1) % geneSize == 0 && (i+1) < geneticCode.length()) form += "][";
 		}
 		return form + "]";
 	}
@@ -461,6 +552,9 @@ public class Creature {
 		return ageCurrent;
 	}
 
+	/**
+	 * Prints the stats and attributes of this Creature to the Terminal.
+	 */
 	public void print(){
 		System.out.println("Genetic Code: " + getGeneticCodeFormatted());
 		System.out.println("Gene Size: " + geneSize);

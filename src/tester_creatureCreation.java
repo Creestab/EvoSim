@@ -5,7 +5,7 @@
 /**
  * @author Chris Berghoff
  * @version 0.0.1
- * @date 11/5/17
+ * @date 11/6/17
  */
 public class tester_creatureCreation {
 
