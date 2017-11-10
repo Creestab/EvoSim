@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * 
  */
@@ -12,6 +14,31 @@ public class SimFuncs {
 		
 	}
 
+	/**
+	 * Creates an array of random Creatures of length 50.
+	 * @return the array of Creatures.
+	 */
+	public ArrayList<Creature> populate(){
+		ArrayList<Creature> creatures = new ArrayList<Creature>();
+		for(int i = 0; i < 50; i++){
+			creatures.add(new Creature());
+		}
+		return creatures;
+	}
+	
+	/**
+	 * Creates an array of random Creatures of length 50.
+	 * @param l the number of Creatures to create.
+	 * @return the array of Creatures.
+	 */
+	public ArrayList<Creature> populate(int l){
+		ArrayList<Creature> creatures = new ArrayList<Creature>();
+		for(int i = 0; i < l; i++){
+			creatures.add(new Creature());
+		}
+		return creatures;
+	}
+	
 	/**
 	 * Determines which creature will eat the other in a paring.
 	 * @param c1 is a creature in a pair.
@@ -31,5 +58,22 @@ public class SimFuncs {
 	 */
 	public boolean breedable(Creature c1, Creature c2){
 		return (c1.getGeneComplexity() == c2.getGeneComplexity()) && (c1.getGeneSize() == c2.getGeneSize());
+	}
+	/**
+	 * Go's through a set of Creatures and prints out all of their info in a neat and concise fassion.
+	 * @param creatures the array of Creatures.
+	 */
+	public void printCreatures(ArrayList<Creature> creatures){
+		int l = creatures.size();
+		for(int i = 0; i < l; i++) {creatures.get(i).print(); 	System.out.println();}
+	}
+	
+	/**
+	 * NOT CURRENTLY OPERATIONAL
+	 * @param creatures the array of Creatures.
+	 */
+	public void printCreaturesToFile(ArrayList<Creature> creatures){
+		int l = creatures.size();
+		for(int i = 0; i < l; i++) {creatures.get(i).print();	System.out.println();}
 	}
 }
