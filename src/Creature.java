@@ -1,11 +1,13 @@
+import java.util.Arrays;
+
 /**
  * 
  */
 
 /**
  * @author Chris Berghoff
- * @version 0.0.1
- * @date 11/5/17
+ * @version 0.1.1
+ * @date 11/9/17
  */
 public class Creature {
 	protected byte geneSize;
@@ -26,7 +28,7 @@ public class Creature {
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 2);
 		geneticCode = geneGen(geneSize);
-		nutrition = "" + eleGen(geneToSeed(geneticCode));
+		nutrition = sortString("" + eleGen(geneToSeed(geneticCode)));
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);
@@ -34,7 +36,7 @@ public class Creature {
 		hungerMax = 10;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
-		ageCurrent = 1;
+		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 3) + 1;
 	}
 	public Creature(int complex, int size){
@@ -55,8 +57,9 @@ public class Creature {
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
+		nutrition = sortString(nutrition);
 
-		ageCurrent = 1;
+		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
@@ -78,13 +81,70 @@ public class Creature {
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
 			nutrition = addDiet(geneticCode, nutrition);
 		}
+		nutrition = sortString(nutrition);
 
-		ageCurrent = 1;
+		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
-	public Creature(String parent1, String parent2){
+	public Creature(Creature p1, Creature p2){
+		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel()));
+		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
+		double p1Weight = p1Val / (p1Val + p2Val);
+		double p2Weight = p2Val / (p1Val + p2Val);
 
+		geneSize  = p1.getGeneSize();
+		geneComplexity = p1.getGeneComplexity();
+		level = 1;
+		xpCurrent = 0;
+		xpUntilLevel = xpCurve(level);
+
+		geneticCode = "";
+		int l = p1.getGeneticCode().length();
+		for(int i = 0; i < l; i++){
+			if(Math.random() < p1Weight) geneticCode += p1.getGeneticCode().charAt(i);
+			else geneticCode += p2.getGeneticCode().charAt(i);
+		}
+
+		nutrition = "";
+		l = p1.getNutrition().length();
+		for(int i = 0; i < l; i++){
+			if(p2.getNutrition().indexOf(p1.getNutrition().charAt(i)) != -1) nutrition += p1.getNutrition().charAt(i);
+		}
+		
+		int n1 = 0;
+		int n2 = 0;
+		int extraNutrition = (int)Math.floor((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();
+		while(nutrition.length() < extraNutrition){
+			if(Math.random() < p1Weight && n1 < p1.getNutrition().length()){
+				if(nutrition.indexOf(p1.getNutrition().charAt(n1)) == -1){
+					nutrition += p1.getNutrition().charAt(n1);
+				}
+				n1++;
+			}
+			
+			else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1){
+				nutrition += p2.getNutrition().charAt(n2);
+				n2++;
+			}
+			
+			else{
+				n2++;
+				while(nutrition.length() < extraNutrition){
+					char ele = eleGen();
+					if(nutrition.indexOf(ele) == -1) nutrition += ele;
+				}
+			}
+		}
+		
+		digestPower = (int)Math.floor(((p1Weight * p1.getDigestPower()) + (p2Weight * p2.getDigestPower())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));
+		hungerMax = (int)Math.floor(((p1Weight * p1.getHungerMax()) + (p2Weight * p2.getHungerMax())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));
+		hungerCurrent = hungerMax;
+		hungerRate = (int)Math.floor((p1Weight * p1.getHungerRate()) + (p2Weight * p2.getHungerRate()));
+		
+		ageCurrent = 0;
+		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 	}
 
 	public void tick(){
@@ -141,16 +201,6 @@ public class Creature {
 		}
 	}
 
-	public String addDiet(String genes, String diet){
-		char cur = eleGen(geneToSeed(genes));
-		if(diet.indexOf(cur) == -1) return diet + cur;
-		else return diet;
-	}
-
-	public int geneToSeed(String genes){
-		return (int)(Math.pow(productString(genes), (sumString(genes) % 11)) + sumString(genes));
-	}
-
 	public String geneGen(int length){
 		String gene = "";
 
@@ -159,6 +209,16 @@ public class Creature {
 		}
 
 		return gene;
+	}
+
+	public String addDiet(String genes, String diet){
+		char cur = eleGen(geneToSeed(genes));
+		if(diet.indexOf(cur) == -1) return diet + cur;
+		else return diet;
+	}
+
+	public int geneToSeed(String genes){
+		return (int)(Math.pow(productString(genes), (sumString(genes) % 11)) + sumString(genes));
 	}
 
 	public char eleGen(){
@@ -252,6 +312,12 @@ public class Creature {
 
 	public int xpCurve(int lvl){
 		return ((int)(5000 * Math.pow(1.03, lvl))) -5050;
+	}
+
+	public String sortString(String s){
+		char[] sChar = s.toCharArray();
+		Arrays.sort(sChar);
+		return new String(sChar);
 	}
 
 	public int sumString(String s){
