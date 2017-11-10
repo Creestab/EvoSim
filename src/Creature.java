@@ -9,7 +9,7 @@ import java.util.Arrays;
  * @version 0.1.1
  * @date 11/9/17
  */
-public class Creature {
+public class Creature implements Comparable<Creature>, Cloneable {
 	protected byte geneSize;
 	protected int geneComplexity;
 	protected String geneticCode;
@@ -398,6 +398,52 @@ public class Creature {
 	}
 
 	/**
+	 * Sums the character values of this creatures geneticCode [A = 1, B = 2, C = 3, ext].
+	 * @return the sum.
+	 */
+	public int sumGenes(){
+		int sum = 0;
+
+		int length = geneticCode.length();
+		char cur;
+		for(int i = 0; i < length; i++){
+			cur = geneticCode.charAt(i);
+
+			if(cur == 'A') sum += 1;		
+			else if(cur == 'B') sum += 2;	
+			else if(cur == 'C') sum += 3;
+			else if(cur == 'D') sum += 4;
+			else if(cur == 'E') sum += 5;
+			else if(cur == 'F') sum += 6;
+			else if(cur == 'G') sum += 7;
+			else if(cur == 'H') sum += 8;
+			else if(cur == 'I') sum += 9;
+			else if(cur == 'J') sum += 10;
+			else if(cur == 'K') sum += 11;
+			else if(cur == 'L') sum += 12;
+			else if(cur == 'M') sum += 13;
+			else if(cur == 'N') sum += 14;
+			else if(cur == 'O') sum += 15;
+			else if(cur == 'P') sum += 16;
+			else if(cur == 'Q') sum += 17;
+			else if(cur == 'R') sum += 18;
+			else if(cur == 'S') sum += 19;
+			else if(cur == 'T') sum += 20;
+			else if(cur == 'U') sum += 21;
+			else if(cur == 'V') sum += 22;
+			else if(cur == 'W') sum += 23;
+			else if(cur == 'X') sum += 24;
+			else if(cur == 'Y') sum += 25;
+			else if(cur == 'Z') sum += 26;
+			else{
+				return '?';
+			}
+		}
+
+		return sum;
+	}
+	
+	/**
 	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
 	 * @return the sum.
@@ -444,6 +490,53 @@ public class Creature {
 		return sum;
 	}
 
+	/**
+	 * Multiplies the character values of this Creatures geneticCode [A = 1, B = 2, C = 3, ext].
+	 * @param s the String
+	 * @return the product.
+	 */
+	public int productGenes(){
+		int prod = 0;
+
+		int length = geneticCode.length();
+		char cur;
+		for(int i = 0; i < length; i++){
+			cur = geneticCode.charAt(i);
+
+			if(cur == 'A') prod *= 1;		
+			else if(cur == 'B') prod *= 2;	
+			else if(cur == 'C') prod *= 3;
+			else if(cur == 'D') prod *= 4;
+			else if(cur == 'E') prod *= 5;
+			else if(cur == 'F') prod *= 6;
+			else if(cur == 'G') prod *= 7;
+			else if(cur == 'H') prod *= 8;
+			else if(cur == 'I') prod *= 9;
+			else if(cur == 'J') prod *= 10;
+			else if(cur == 'K') prod *= 11;
+			else if(cur == 'L') prod *= 12;
+			else if(cur == 'M') prod *= 13;
+			else if(cur == 'N') prod *= 14;
+			else if(cur == 'O') prod *= 15;
+			else if(cur == 'P') prod *= 16;
+			else if(cur == 'Q') prod *= 17;
+			else if(cur == 'R') prod *= 18;
+			else if(cur == 'S') prod *= 19;
+			else if(cur == 'T') prod *= 20;
+			else if(cur == 'U') prod *= 21;
+			else if(cur == 'V') prod *= 22;
+			else if(cur == 'W') prod *= 23;
+			else if(cur == 'X') prod *= 24;
+			else if(cur == 'Y') prod *= 25;
+			else if(cur == 'Z') prod *= 26;
+			else{
+				return '?';
+			}
+		}
+
+		return prod;
+	}
+	
 	/**
 	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
@@ -543,6 +636,10 @@ public class Creature {
 	public double getHungerRate(){
 		return hungerRate;
 	}
+	
+	public double getHungerRatio(){
+		return hungerCurrent / hungerMax;
+	}
 
 	public int getAgeMax(){
 		return ageMax;
@@ -571,6 +668,7 @@ public class Creature {
 		System.out.println("Age of Death: " + ageMax);
 	}
 
+	@Override
 	public String toString(){
 		return 	"geneSize: " + geneSize + '\n' +
 				"geneComplexity: " + geneComplexity + '\n' +
@@ -585,5 +683,8 @@ public class Creature {
 				"hungerRate: " + hungerRate + '\n' +
 				"ageMax: " + ageMax + '\n' +
 				"ageCurrent: " + ageCurrent + '\n';
+	}
+	public int compareTo(Creature c) {
+		return xpCurrent - c.getXP();
 	}
 }

@@ -11,7 +11,7 @@ import java.util.Collections;
  * @date 11/9/17
  */
 
-public class Simulation_Skeleton{
+public class Simulation{
 	public static void main(String[] args) {
 
 
@@ -43,7 +43,42 @@ public class Simulation_Skeleton{
 			 */
 
 
+			Collections.shuffle(creatures);
+			if(numC % 2 == 1){
+				tempCreature1 = creatures.get(numC - 1);
+				numC--;
+			}
+			shufCreatures1 = new ArrayList<Creature>(creatures.subList(0, numC / 2));
+			shufCreatures2 = new ArrayList<Creature>(creatures.subList(numC/2, numC));
 
+			creatures.clear();
+			if(!(tempCreature1 == null)) creatures.add(tempCreature1);
+
+			for(int i = 0; i < numC / 2; i++){
+				tempCreature1 = shufCreatures1.get(i);
+				tempCreature2 = shufCreatures2.get(i);
+				if(sim.breedable(tempCreature1, tempCreature2) && tempCreature1.getHungerRatio() > .2 && tempCreature2.getHungerRatio() > .2){
+					tempCreature1.xpGain(tempCreature2.getLevel() * tempCreature2.sumGenes());
+					creatures.add(tempCreature1);
+
+					tempCreature2.xpGain(tempCreature1.getLevel() * tempCreature1.sumGenes());
+					creatures.add(tempCreature2);
+
+					creatures.add(new Creature(tempCreature1, tempCreature2));
+				}
+				else if(tempCreature1.getHungerRatio() < .75 && sim.whoEatsWho(tempCreature1, tempCreature2)){
+					tempCreature1.eat(tempCreature2.getGeneticCode(), tempCreature2.getGeneComplexity());
+					creatures.add(tempCreature1);
+				}
+				else if(tempCreature2.getHungerRatio() < .75){
+					tempCreature2.eat(tempCreature1.getGeneticCode(), tempCreature1.getGeneComplexity());
+					creatures.add(tempCreature2);
+				}
+				else{
+					creatures.add(tempCreature1);
+					creatures.add(tempCreature2);
+				}
+			}
 
 
 
