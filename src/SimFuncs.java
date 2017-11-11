@@ -59,6 +59,11 @@ public class SimFuncs {
 	public boolean breedable(Creature c1, Creature c2){
 		return (c1.getGeneComplexity() == c2.getGeneComplexity()) && (c1.getGeneSize() == c2.getGeneSize());
 	}
+	
+	public boolean RIP(Creature c) {
+		return (c.getAgeCurrent() >= c.getAgeMax() || c.getHungerCurrent() <= 0);
+	}
+	
 	/**
 	 * Go's through a set of Creatures and prints out all of their info in a neat and concise fassion.
 	 * @param creatures the array of Creatures.

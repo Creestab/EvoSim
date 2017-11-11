@@ -221,7 +221,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 			xpCurrent += Math.ceil((nutrients * (Math.floor(preyComplexity / level) + 1) * 10) * (1 / (Math.pow(2, preyComplexity - digestPower))));
 		}
 		else{
-			hungerCurrent += nutrients;
+			hungerCurrent += nutrients * 3;
 			if(hungerCurrent > hungerMax) hungerCurrent = hungerMax;
 
 			xpCurrent += nutrients * (preyComplexity + 1) * 10;
@@ -361,7 +361,8 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		if(geneToSeed(geneticCode) % 5 == 0) digestPower++;
 		if(geneToSeed(geneticCode) % 5 == 1) hungerMax++;
-		if(geneToSeed(geneticCode) % 5 == 2) hungerRate -= .1;
+		if(geneToSeed(geneticCode) % 5 == 2 && hungerRate >= .6) hungerRate -= .05;
+		else hungerMax++;
 		if(geneToSeed(geneticCode) % 5 == 3) addDiet(geneticCode, nutrition);
 		if(geneToSeed(geneticCode) % 5 == 4) {
 			geneComplexity++;
@@ -648,6 +649,9 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public int getAgeCurrent(){
 		return ageCurrent;
 	}
+	public int getWorth() {
+		return (int) (level * Math.sqrt(sumGenes()) * ((hungerCurrent / hungerMax) + .5));
+	}
 
 	/**
 	 * Prints the stats and attributes of this Creature to the Terminal.
@@ -685,6 +689,6 @@ public class Creature implements Comparable<Creature>, Cloneable {
 				"ageCurrent: " + ageCurrent + '\n';
 	}
 	public int compareTo(Creature c) {
-		return xpCurrent - c.getXP();
+		return getWorth() - c.getWorth();
 	}
 }
