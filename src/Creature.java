@@ -10,37 +10,38 @@ import java.util.Arrays;
  * @date 11/9/17
  */
 public class Creature implements Comparable<Creature>, Cloneable {
-	protected byte geneSize;
-	protected int geneComplexity;
-	protected String geneticCode;
-	protected String nutrition;
-	protected int level;
-	protected int xpCurrent;
-	protected int xpUntilLevel;
-	protected int digestPower;
-	protected int hungerMax;
-	protected double hungerCurrent;
-	protected double hungerRate;
-	protected int ageMax;
-	protected int ageCurrent;
+	protected byte geneSize;			//The length of this Creatures gene strand
+	protected int geneComplexity;		//The height of the gene strand "tree"
+	protected String geneticCode;		//The sequence of elements representing this creatures genes, with length = size ^ complexity
+	protected String nutrition;			//This creatures diet, aka the elements it needs to eat
+	protected int level;				//This creatures current level
+	protected int xpCurrent;			//The amount of total xp this creature has amassed
+	protected int xpUntilLevel;			//The amount of xp needed to reach the next level
+	protected int digestPower;			//The complexity level of prey that this creature can process at 100% efficiency
+	protected int hungerMax;			//The capacity of this creatures stomach, its hunger can not surpass this
+	protected double hungerCurrent;		//This creatures current hunger. The higher it is, the fuller its stomach is
+	protected double hungerRate;		//The rate at which this creatures hunger depletes per tick
+	protected int ageMax;				//The amount of ticks this creature will live for
+	protected int ageCurrent;			//The current amount ticks this creature has lived
 
 	/**
 	 * The default constructor. Creates a level 1 Creature with a gene complexity of 1 and a random size and code.
 	 */
 	public Creature(){
 		geneComplexity = 1;
-		geneSize = (byte)((Math.random() * 3) + 2);
-		geneticCode = geneGen(geneSize);
-		nutrition = sortString("" + eleGen(geneToSeed(geneticCode)));
+		geneSize = (byte)((Math.random() * 3) + 2);		//A random number between 2 and 4 inclusive
+		geneticCode = geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
+		nutrition = sortString("" + eleGen(geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
 		level = 1;
 		xpCurrent = 0;
-		xpUntilLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
 		digestPower = 1;
-		hungerMax = 10;
+		hungerMax = 25;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
 		ageCurrent = 0;
-		ageMax = (sumString(geneticCode) / 3) + 1;
+		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;	 	//Determines how long this creature will live based on their genetic code
 	}
 	/**
 	 * Creates a level 1 Creature with a defined gene complexity and size but a random code.
@@ -50,26 +51,26 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public Creature(int complex, int size){
 		level = 1;
 		xpCurrent = 0;
-		xpUntilLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
 		digestPower = 1;
-		hungerMax = 10;
+		hungerMax = 25;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
 
 		geneComplexity = complex;
 		geneSize = (byte)size;
-		geneticCode = geneGen(geneSize);
+		geneticCode = geneGen(geneSize);	//Sets this creatures genes to a random string of elements of length size
 
-		nutrition = "" + eleGen(geneToSeed(geneticCode));
-		for(int i = 1; i < geneComplexity; i++){
-			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
-			nutrition = addDiet(geneticCode, nutrition);
+		nutrition = "" + eleGen(geneToSeed(geneticCode));		//Sets this creatures diet to an array of elements based off of its genetic seed
+		for(int i = 1; i < geneComplexity; i++){				//Runs a loop for each level of complexity besides the first
+			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());	//Increases the size of the complexity tree of elements, adding seeded elements up to length size ^ (i+1)
+			nutrition = addDiet(geneticCode, nutrition);		//Adds a new diet option (if unique element determined) for each complexity
 		}
-		nutrition = sortString(nutrition);
+		nutrition = sortString(nutrition);	//Sorts the diet alphabetically
 
 		ageCurrent = 0;
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 	}
 	/**
 	 * Creates a level 1 Creature with a defined gene code, complexity, and size.
@@ -80,9 +81,9 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public Creature(String genes, int complex, int size){
 		level = 1;
 		xpCurrent = 0;
-		xpUntilLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
 		digestPower = 1;
-		hungerMax = 10;
+		hungerMax = 25;
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
 
@@ -90,16 +91,14 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		geneSize = (byte)size;
 		geneticCode = genes;
 
-		nutrition = "" + eleGen(geneToSeed(geneticCode));
-		for(int i = 1; i < geneComplexity; i++){
-			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());
-			nutrition = addDiet(geneticCode, nutrition);
+		for(int i = 0; i < geneComplexity; i++){		//Runs a loop for each level of complexity
+			nutrition = addDiet(geneticCode.substring(0, (int)Math.pow(geneSize, i + 1)), nutrition);	//Calculates its diet for each level of complexity, using gene substring of length size ^ i
 		}
-		nutrition = sortString(nutrition);
+		nutrition = sortString(nutrition);		//Sorts the diet alphabetically
 
 		ageCurrent = 0;
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 	}
 	/**
 	 * Creates a level 1 Creature based off the genetics and stats of two other Creatures. Used for breeding.
@@ -107,63 +106,61 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * @param p2 the other Creature used to create this Creature.
 	 */
 	public Creature(Creature p1, Creature p2){
-		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel()));
+		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
 		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
-		double p1Weight = p1Val / (p1Val + p2Val);
-		double p2Weight = p2Val / (p1Val + p2Val);
+		double p1Weight = p1Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
+		double p2Weight = p2Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
 
-		geneSize  = p1.getGeneSize();
-		geneComplexity = p1.getGeneComplexity();
+		geneSize  = p1.getGeneSize();					//Gene size of child is equal to parents
+		geneComplexity = p1.getGeneComplexity();		//Gene complexity of a child is equal to parents
 		level = 1;
 		xpCurrent = 0;
-		xpUntilLevel = xpCurve(level);
+		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
 
 		geneticCode = "";
-		int l = p1.getGeneticCode().length();
-		for(int i = 0; i < l; i++){
-			if(Math.random() < p1Weight) geneticCode += p1.getGeneticCode().charAt(i);
-			else geneticCode += p2.getGeneticCode().charAt(i);
+		int l = (int) Math.pow(geneSize, geneComplexity);		//The length of this creatures genes	
+		for(int i = 0; i < l; i++){						//Runs a loop for each element in this creatures genes
+			if(Math.random() < p1Weight) geneticCode += p1.getGeneticCode().charAt(i);		//If a random double x:{0 >= x < 1} is less than parent 1's prowess ratio, the child's element at gene index i will be parent 1's element at gene index i
+			else geneticCode += p2.getGeneticCode().charAt(i);			//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio, the child's element at gene index i will be parent 2's element at gene index i
 		}
 
 		nutrition = "";
-		l = p1.getNutrition().length();
-		for(int i = 0; i < l; i++){
-			if(p2.getNutrition().indexOf(p1.getNutrition().charAt(i)) != -1) nutrition += p1.getNutrition().charAt(i);
+		l = p1.getNutrition().length();		//The amount of elements in parent 1's diet
+		for(int i = 0; i < l; i++){			//Loops for each element in parent 1's diet
+			if(p2.getNutrition().indexOf(p1.getNutrition().charAt(i)) != -1) nutrition += p1.getNutrition().charAt(i);	//Compares each element of parent 1s diet to parent 2's diet. If any elements are in both, they are added to the childs diet
 		}
 		
 		int n1 = 0;
 		int n2 = 0;
-		int extraNutrition = (int)Math.floor((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();
-		while(nutrition.length() < extraNutrition){
-			if(Math.random() < p1Weight && n1 < p1.getNutrition().length()){
-				if(nutrition.indexOf(p1.getNutrition().charAt(n1)) == -1){
-					nutrition += p1.getNutrition().charAt(n1);
+		l = (int)Math.floor((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();		//The amount of elements in this creatures diet based on the lengths of the 2 parents diets
+		while(nutrition.length() < l){											//Loop runs while the childs current diet isnt as long as it should be
+			if(Math.random() < p1Weight && n1 < p1.getNutrition().length()){	//If a random double x:{0 >= x < 1} is less than parent 1's prowess ratio and not all of parent 1's diet elements have been looked at
+				if(nutrition.indexOf(p1.getNutrition().charAt(n1)) == -1){		//If the current element in parent 1's diet isn't already in the childs diet
+					nutrition += p1.getNutrition().charAt(n1);					//Add the current element being looked at in parent 1's diet to the childs diet
 				}
-				n1++;
+				n1++;			//Increase the index of the current element in parent 1's diet being look at
 			}
 			
-			else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1){
-				nutrition += p2.getNutrition().charAt(n2);
-				n2++;
+			else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1 && n2 < p2.getNutrition().length()){		//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio or all of parent 1's diet elements have been looked at
+				nutrition += p2.getNutrition().charAt(n2);		//Add the current element being looked at in parent 1's diet to the childs diet
+				n2++;			//Increase the index of the current element in parent 1's diet being look at
 			}
-			
 			else{
-				n2++;
-				while(nutrition.length() < extraNutrition){
-					char ele = eleGen();
-					if(nutrition.indexOf(ele) == -1) nutrition += ele;
+				while(nutrition.length() < l && nutrition.length() < 26){		//Runs a loop until the diet is as long as it needs to be and doesnt have every possible element
+					char ele = eleGen();		//Generates a random element
+					if(nutrition.indexOf(ele) == -1) nutrition += ele;			//If the random element isn't in the childs diet already, add it
 				}
 			}
 		}
 		
-		digestPower = (int)Math.floor(((p1Weight * p1.getDigestPower()) + (p2Weight * p2.getDigestPower())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));
-		hungerMax = (int)Math.floor(((p1Weight * p1.getHungerMax()) + (p2Weight * p2.getHungerMax())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));
+		digestPower = (int)Math.ceil(((p1Weight * p1.getDigestPower()) + (p2Weight * p2.getDigestPower())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));		//Determines digest power based on the parents, scaled back depending on their level
+		hungerMax = (int)Math.ceil(((p1Weight * p1.getHungerMax()) + (p2Weight * p2.getHungerMax())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));			//Determines max hunger based on the parents, scaled back depending on their level
 		hungerCurrent = hungerMax;
-		hungerRate = (int)Math.floor((p1Weight * p1.getHungerRate()) + (p2Weight * p2.getHungerRate()));
+		hungerRate = 1;
 		
 		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 	}
 
 	/**
@@ -355,14 +352,14 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public void levelUp()
 	{
 		level++;
-		xpUntilLevel = xpCurve(level + 1);
+		xpUntilLevel = xpCurve(level);
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
 
 		if(geneToSeed(geneticCode) % 5 == 0) digestPower++;
 		if(geneToSeed(geneticCode) % 5 == 1) hungerMax++;
-		if(geneToSeed(geneticCode) % 5 == 2 && hungerRate >= .6) hungerRate -= .05;
-		else hungerMax++;
+		if(geneToSeed(geneticCode) % 5 == 2 && hungerRate >= .45) hungerRate -= .05;
+			else hungerMax++;
 		if(geneToSeed(geneticCode) % 5 == 3) addDiet(geneticCode, nutrition);
 		if(geneToSeed(geneticCode) % 5 == 4) {
 			geneComplexity++;
