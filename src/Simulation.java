@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Timer;
 
 /**
  * 
@@ -12,7 +13,7 @@ import java.util.Collections;
  */
 
 public class Simulation{
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 
 
 		int numCreatures		=10;		//the number of Creatures to start your simulation with.
@@ -20,7 +21,7 @@ public class Simulation{
 		int numSteps			=100;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in debug mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=100;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 
 
@@ -99,6 +100,7 @@ public class Simulation{
 					System.out.println('\n');
 				}
 			}
+			Thread.sleep(100);
 		}
 	}
 }
