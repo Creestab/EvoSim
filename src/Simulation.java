@@ -15,13 +15,13 @@ public class Simulation{
 	public static void main(String[] args) throws InterruptedException {
 
 
-		int numCreatures		=15;		//the number of Creatures to start your simulation with.
+		int numCreatures		=25;		//the number of Creatures to start your simulation with.
 		int minCreatures		=10;		//
-		int maxCreatures		=25;		//
-		int numSteps			=10;		//the number of steps this simulation will run while setSteps is =true.
+		int maxCreatures		=50;		//
+		int numSteps			=100;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in activityLog mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=25;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
 
@@ -41,8 +41,8 @@ public class Simulation{
 			//Beginning of step code.
 			step++;							//Increases current step
 			for(int i = 0; i < numC; i++){	//Calls the basic tick actions for each creature
-				if(creatures.get(i).getXP() > HS_XP.getXP()) HS_XP = creatures.get(i);
-				if(creatures.get(i).getAgeCurrent() > HS_Age.getAgeCurrent()) HS_Age = creatures.get(i);
+				if(creatures.get(i).getXP() > HS_XP.getXP() && !sim.RIP(creatures.get(i))) HS_XP = creatures.get(i);
+				if(creatures.get(i).getAgeCurrent() > HS_Age.getAgeCurrent() && !sim.RIP(creatures.get(i))) HS_Age = creatures.get(i);
 				creatures.get(i).tick();
 			}
 			//if(activityLog) System.out.println("Tick #" + step + "_ Current XP High Score: "); HS_XP.print();
@@ -81,20 +81,26 @@ public class Simulation{
 
 					creatures.add(new Creature(tempCreature1, tempCreature2));					//Add the offspring of the pair to the list
 				}
+				
 				else if(tempCreature1.getHungerRatio() < .75 && sim.whoEatsWho(tempCreature1, tempCreature2)){		//If creature 1 is hungry and is "stronger" than creature 2, it eats it
 						if(activityLog) System.out.println("Tick #" + step + "_ " + tempCreature1.getGeneticCode() + " eats " + tempCreature2.getGeneticCode() + ".");
 					tempCreature1.eat(tempCreature2.getGeneticCode(), tempCreature2.getGeneComplexity());		//Creature 1 eats Creature 2
 					if(!sim.RIP(tempCreature1)) creatures.add(tempCreature1);					//Add creature back into the main List if it isn't set to die
 				}
+				
 				else if(tempCreature2.getHungerRatio() < .75){									//If creature 2 is hungry and is "stronger" than creature 1, it eats it
 						if(activityLog) System.out.println("Tick #" + step + "_ " + tempCreature2.getGeneticCode() + " eats " + tempCreature1.getGeneticCode() + ".");
 					tempCreature2.eat(tempCreature1.getGeneticCode(), tempCreature1.getGeneComplexity());		//Creature 2 eats Creature 1
 					if(!sim.RIP(tempCreature2)) creatures.add(tempCreature2);					//Add creature back into the main List if it isn't set to die
 				}
-				else{																//If neither Creature is hungry, nothing happens
+				
+				else{															//If neither Creature is hungry, they eat a basic random meal and get added back
+					tempCreature1.eat(""+sim.eleGen((int)(Math.random() * step) + 1), 1 + (int)Math.log(step));	//Eats some basic nutrition
+					tempCreature2.eat(""+sim.eleGen((int)(Math.random() * step) + 1), 1 + (int)Math.log(step));	//Eats some basic nutrition
+					
 					if(!sim.RIP(tempCreature1)) creatures.add(tempCreature1);		//Add creature back into the main List if it isn't set to die
 					if(!sim.RIP(tempCreature2)) creatures.add(tempCreature2);		//Add creature back into the main List if it isn't set to die
-				}
+					}
 			}
 			if(activityLog) System.out.println('\n' + "Tick #" + step + "_ Number of Creatures after pairing but before purge/repopulation: " + creatures.size() + '\n');
 

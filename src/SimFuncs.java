@@ -46,8 +46,8 @@ public class SimFuncs {
 	 * @return if true, c1 eats c2. If false, c2 eats c1.
 	 */
 	public boolean whoEatsWho(Creature c1, Creature c2){
-		return c1.getLevel() * ((c1.geneToSeed() % 3) + 1) * Math.floor(c1.getHungerCurrent() / c1.getHungerMax()) 
-				> c2.getLevel() * ((c2.geneToSeed() % 3) + 1) * Math.floor(c2.getHungerCurrent() / c2.getHungerMax());
+		return Math.pow(c1.getLevel(), c1.getGeneComplexity()) * ((c1.geneToSeed() % 3) + 1) * Math.floor(c1.getHungerCurrent() / c1.getHungerMax()) 
+				> Math.pow(c2.getLevel(), c2.getGeneComplexity()) * ((c2.geneToSeed() % 3) + 1) * Math.floor(c2.getHungerCurrent() / c2.getHungerMax());
 	}
 	
 	/**
@@ -62,6 +62,83 @@ public class SimFuncs {
 	
 	public boolean RIP(Creature c) {
 		return (c.getAgeCurrent() >= c.getAgeMax() || c.getHungerCurrent() <= 0);
+	}
+	
+	/**
+	 * Generates a random element.
+	 * @return the element.
+	 */
+	public char eleGen(){
+		int rand = (int)(Math.random() * 351);
+
+		if(rand < 26) return 'A';		//26
+		else if(rand < 51) return 'B';	//25
+		else if(rand < 75) return 'C';	//24
+		else if(rand < 98) return 'D';	//23
+		else if(rand < 120) return 'E'; //22
+		else if(rand < 141) return 'F'; //21
+		else if(rand < 161) return 'G'; //20
+		else if(rand < 180) return 'H'; //19
+		else if(rand < 198) return 'I'; //18
+		else if(rand < 215) return 'J'; //17
+		else if(rand < 231) return 'K'; //16
+		else if(rand < 246) return 'L'; //15
+		else if(rand < 260) return 'M'; //14
+		else if(rand < 273) return 'N'; //13
+		else if(rand < 285) return 'O'; //12
+		else if(rand < 296) return 'P'; //11
+		else if(rand < 306) return 'Q'; //10
+		else if(rand < 315) return 'R'; //9
+		else if(rand < 323) return 'S'; //8
+		else if(rand < 330) return 'T'; //7
+		else if(rand < 336) return 'U'; //6
+		else if(rand < 341) return 'V'; //5
+		else if(rand < 345) return 'W'; //4
+		else if(rand < 348) return 'X'; //3
+		else if(rand < 350) return 'Y'; //2
+		else if(rand < 351) return 'Z'; //1
+		else{
+			return '?';
+		}
+	}
+
+	/**
+	 * Generates a seeded element.
+	 * @param seed the seed used to generate the element.
+	 * @return the element.
+	 */
+	public char eleGen(int seed){
+		seed = (int)(seed % 351);
+
+		if(seed < 26) return 'A';		//26
+		else if(seed < 51) return 'B';	//25
+		else if(seed < 75) return 'C';	//24
+		else if(seed < 98) return 'D';	//23
+		else if(seed < 120) return 'E'; //22
+		else if(seed < 141) return 'F'; //21
+		else if(seed < 161) return 'G'; //20
+		else if(seed < 180) return 'H'; //19
+		else if(seed < 198) return 'I'; //18
+		else if(seed < 215) return 'J'; //17
+		else if(seed < 231) return 'K'; //16
+		else if(seed < 246) return 'L'; //15
+		else if(seed < 260) return 'M'; //14
+		else if(seed < 273) return 'N'; //13
+		else if(seed < 285) return 'O'; //12
+		else if(seed < 296) return 'P'; //11
+		else if(seed < 306) return 'Q'; //10
+		else if(seed < 315) return 'R'; //9
+		else if(seed < 323) return 'S'; //8
+		else if(seed < 330) return 'T'; //7
+		else if(seed < 336) return 'U'; //6
+		else if(seed < 341) return 'V'; //5
+		else if(seed < 345) return 'W'; //4
+		else if(seed < 348) return 'X'; //3
+		else if(seed < 350) return 'Y'; //2
+		else if(seed < 351) return 'Z'; //1
+		else{
+			return '?';
+		}
 	}
 	
 	/**

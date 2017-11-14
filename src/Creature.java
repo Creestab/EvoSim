@@ -10,6 +10,7 @@ import java.util.Arrays;
  * @date 11/9/17
  */
 public class Creature implements Comparable<Creature>, Cloneable {
+	protected SimFuncs sim;
 	protected byte geneSize;			//The length of this Creatures gene strand
 	protected int geneComplexity;		//The height of the gene strand "tree"
 	protected String geneticCode;		//The sequence of elements representing this creatures genes, with length = size ^ complexity
@@ -28,10 +29,11 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * The default constructor. Creates a level 1 Creature with a gene complexity of 1 and a random size and code.
 	 */
 	public Creature(){
+		sim = new SimFuncs();
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 2);		//A random number between 2 and 4 inclusive
 		geneticCode = geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
-		nutrition = sortString("" + eleGen(geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
+		nutrition = sortString("" + sim.eleGen(geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
@@ -49,6 +51,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * @param size this Creatures geneSize.
 	 */
 	public Creature(int complex, int size){
+		sim = new SimFuncs();
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
@@ -61,7 +64,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		geneSize = (byte)size;
 		geneticCode = geneGen(geneSize);	//Sets this creatures genes to a random string of elements of length size
 
-		nutrition = "" + eleGen(geneToSeed(geneticCode));		//Sets this creatures diet to an array of elements based off of its genetic seed
+		nutrition = "" + sim.eleGen(geneToSeed(geneticCode));		//Sets this creatures diet to an array of elements based off of its genetic seed
 		for(int i = 1; i < geneComplexity; i++){				//Runs a loop for each level of complexity besides the first
 			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());	//Increases the size of the complexity tree of elements, adding seeded elements up to length size ^ (i+1)
 			nutrition = addDiet(geneticCode, nutrition);		//Adds a new diet option (if unique element determined) for each complexity
@@ -79,6 +82,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * @param size this Creatures geneSize.
 	 */
 	public Creature(String genes, int complex, int size){
+		sim = new SimFuncs();
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
@@ -106,6 +110,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * @param p2 the other Creature used to create this Creature.
 	 */
 	public Creature(Creature p1, Creature p2){
+		sim = new SimFuncs();
 		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
 		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
 		double p1Weight = p1Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
@@ -148,7 +153,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 					n2++;			//Increase the index of the current element in parent 1's diet being look at
 				}
 				else if(nutrition.length() < 26){
-					char ele = eleGen();		//Generates a random element
+					char ele = sim.eleGen();		//Generates a random element
 					if(nutrition.indexOf(ele) == -1) nutrition += ele;			//If the random element isn't in the childs diet already, add it
 				}
 			}
@@ -235,7 +240,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		String gene = "";
 
 		for(int i = 0; i < length; i++){
-			gene += eleGen();
+			gene += sim.eleGen();
 		}
 
 		return gene;
@@ -248,7 +253,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 * @return the Creatures updated nutrition.
 	 */
 	public String addDiet(String genes, String diet){
-		char cur = eleGen(geneToSeed(genes));
+		char cur = sim.eleGen(geneToSeed(genes));
 		if(diet.indexOf(cur) == -1) return diet + cur;
 		else return diet;
 	}
@@ -270,82 +275,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		return (int)(Math.pow(productString(genes), (sumString(genes) % 11)) + sumString(genes));
 	}
 
-	/**
-	 * Generates a random element.
-	 * @return the element.
-	 */
-	public char eleGen(){
-		int rand = (int)(Math.random() * 351);
 
-		if(rand < 26) return 'A';		//26
-		else if(rand < 51) return 'B';	//25
-		else if(rand < 75) return 'C';	//24
-		else if(rand < 98) return 'D';	//23
-		else if(rand < 120) return 'E'; //22
-		else if(rand < 141) return 'F'; //21
-		else if(rand < 161) return 'G'; //20
-		else if(rand < 180) return 'H'; //19
-		else if(rand < 198) return 'I'; //18
-		else if(rand < 215) return 'J'; //17
-		else if(rand < 231) return 'K'; //16
-		else if(rand < 246) return 'L'; //15
-		else if(rand < 260) return 'M'; //14
-		else if(rand < 273) return 'N'; //13
-		else if(rand < 285) return 'O'; //12
-		else if(rand < 296) return 'P'; //11
-		else if(rand < 306) return 'Q'; //10
-		else if(rand < 315) return 'R'; //9
-		else if(rand < 323) return 'S'; //8
-		else if(rand < 330) return 'T'; //7
-		else if(rand < 336) return 'U'; //6
-		else if(rand < 341) return 'V'; //5
-		else if(rand < 345) return 'W'; //4
-		else if(rand < 348) return 'X'; //3
-		else if(rand < 350) return 'Y'; //2
-		else if(rand < 351) return 'Z'; //1
-		else{
-			return '?';
-		}
-	}
-
-	/**
-	 * Generates a seeded element.
-	 * @param seed the seed used to generate the element.
-	 * @return the element.
-	 */
-	public char eleGen(int seed){
-		seed = (int)(seed % 351);
-
-		if(seed < 26) return 'A';		//26
-		else if(seed < 51) return 'B';	//25
-		else if(seed < 75) return 'C';	//24
-		else if(seed < 98) return 'D';	//23
-		else if(seed < 120) return 'E'; //22
-		else if(seed < 141) return 'F'; //21
-		else if(seed < 161) return 'G'; //20
-		else if(seed < 180) return 'H'; //19
-		else if(seed < 198) return 'I'; //18
-		else if(seed < 215) return 'J'; //17
-		else if(seed < 231) return 'K'; //16
-		else if(seed < 246) return 'L'; //15
-		else if(seed < 260) return 'M'; //14
-		else if(seed < 273) return 'N'; //13
-		else if(seed < 285) return 'O'; //12
-		else if(seed < 296) return 'P'; //11
-		else if(seed < 306) return 'Q'; //10
-		else if(seed < 315) return 'R'; //9
-		else if(seed < 323) return 'S'; //8
-		else if(seed < 330) return 'T'; //7
-		else if(seed < 336) return 'U'; //6
-		else if(seed < 341) return 'V'; //5
-		else if(seed < 345) return 'W'; //4
-		else if(seed < 348) return 'X'; //3
-		else if(seed < 350) return 'Y'; //2
-		else if(seed < 351) return 'Z'; //1
-		else{
-			return '?';
-		}
-	}
 
 	/**
 	 * Used to increase this Creatures level and stats accordingly.
