@@ -129,35 +129,36 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		for(int i = 0; i < l; i++){			//Loops for each element in parent 1's diet
 			if(p2.getNutrition().indexOf(p1.getNutrition().charAt(i)) != -1) nutrition += p1.getNutrition().charAt(i);	//Compares each element of parent 1s diet to parent 2's diet. If any elements are in both, they are added to the childs diet
 		}
-		
+
 		int n1 = 0;
 		int n2 = 0;
 		l = (int)Math.floor((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();		//The amount of elements in this creatures diet based on the lengths of the 2 parents diets
-		while(nutrition.length() < l){											//Loop runs while the childs current diet isnt as long as it should be
-			if(Math.random() < p1Weight && n1 < p1.getNutrition().length()){	//If a random double x:{0 >= x < 1} is less than parent 1's prowess ratio and not all of parent 1's diet elements have been looked at
-				if(nutrition.indexOf(p1.getNutrition().charAt(n1)) == -1){		//If the current element in parent 1's diet isn't already in the childs diet
-					nutrition += p1.getNutrition().charAt(n1);					//Add the current element being looked at in parent 1's diet to the childs diet
+		if(l >= 26) nutrition = "ABCDEFGHIJKLMNOPQRSTUVQXYZ";
+		else{
+			while(nutrition.length() < l){											//Loop runs while the childs current diet isnt as long as it should be
+				if(Math.random() < p1Weight && n1 < p1.getNutrition().length()){	//If a random double x:{0 >= x < 1} is less than parent 1's prowess ratio and not all of parent 1's diet elements have been looked at
+					if(nutrition.indexOf(p1.getNutrition().charAt(n1)) == -1){		//If the current element in parent 1's diet isn't already in the childs diet
+						nutrition += p1.getNutrition().charAt(n1);					//Add the current element being looked at in parent 1's diet to the childs diet
+					}
+					n1++;			//Increase the index of the current element in parent 1's diet being look at
 				}
-				n1++;			//Increase the index of the current element in parent 1's diet being look at
-			}
-			
-			else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1 && n2 < p2.getNutrition().length()){		//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio or all of parent 1's diet elements have been looked at
-				nutrition += p2.getNutrition().charAt(n2);		//Add the current element being looked at in parent 1's diet to the childs diet
-				n2++;			//Increase the index of the current element in parent 1's diet being look at
-			}
-			else{
-				while(nutrition.length() < l && nutrition.length() < 26){		//Runs a loop until the diet is as long as it needs to be and doesnt have every possible element
+
+				else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1 && n2 < p2.getNutrition().length()){		//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio or all of parent 1's diet elements have been looked at
+					nutrition += p2.getNutrition().charAt(n2);		//Add the current element being looked at in parent 1's diet to the childs diet
+					n2++;			//Increase the index of the current element in parent 1's diet being look at
+				}
+				else if(nutrition.length() < 26){
 					char ele = eleGen();		//Generates a random element
 					if(nutrition.indexOf(ele) == -1) nutrition += ele;			//If the random element isn't in the childs diet already, add it
 				}
 			}
 		}
-		
+
 		digestPower = (int)Math.ceil(((p1Weight * p1.getDigestPower()) + (p2Weight * p2.getDigestPower())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));		//Determines digest power based on the parents, scaled back depending on their level
 		hungerMax = (int)Math.ceil(((p1Weight * p1.getHungerMax()) + (p2Weight * p2.getHungerMax())) * (1 / ((p1.getLevel() + p2.getLevel()) / 2)));			//Determines max hunger based on the parents, scaled back depending on their level
 		hungerCurrent = hungerMax;
 		hungerRate = 1;
-		
+
 		ageCurrent = 0;
 		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
@@ -171,7 +172,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		hungerCurrent -= hungerRate;
 		ageCurrent++;
 	}
-	
+
 	/**
 	 * This Creature eats the other Creature. NOTE: this function does not effect the eaten Creature object, removing from your Creature array is advised.
 	 * @param preyGenes the geneticCode of the Creature getting eaten.
@@ -251,7 +252,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		if(diet.indexOf(cur) == -1) return diet + cur;
 		else return diet;
 	}
-	
+
 	/**
 	 * Uses this creatures geneticCode to generate a seed.
 	 * @return the seed.
@@ -259,7 +260,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public int geneToSeed(){
 		return (int)(Math.pow(productString(geneticCode), (sumString(geneticCode) % 11)) + sumString(geneticCode));
 	}
-	
+
 	/**
 	 * Uses a genetic code to generate a seed.
 	 * @param genes the genetic code used to generate the seed.
@@ -359,7 +360,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 0) digestPower++;	//
 		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 1) hungerMax++;
 		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 2 && hungerRate >= .45) hungerRate -= .05;
-			else hungerMax++;
+		else hungerMax++;
 		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 3) addDiet(geneticCode, nutrition);
 		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 4) {
 			geneComplexity++;
@@ -440,7 +441,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		return sum;
 	}
-	
+
 	/**
 	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
@@ -534,7 +535,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		return prod;
 	}
-	
+
 	/**
 	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
@@ -634,7 +635,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public double getHungerRate(){
 		return hungerRate;
 	}
-	
+
 	public double getHungerRatio(){
 		return hungerCurrent / hungerMax;
 	}
