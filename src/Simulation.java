@@ -24,11 +24,11 @@ public class Simulation{
 		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
-		
-		
+
+
 		SimFuncs sim = new SimFuncs();			//Helper Functions
 		ArrayList<Creature> creatures = sim.populate(numCreatures);		//Create a bunch of random creatures
-			if(activityLog) System.out.println("Number of Creatures on Initialization");
+			if(activityLog) System.out.println("Number of Creatures on Initialization:" + creatures.size() + '\n');
 		ArrayList<Creature> shufCreatures1;		//Array for one half the creatures
 		ArrayList<Creature> shufCreatures2;		//Array for the other half of the creatures
 		Creature HS_XP = creatures.get(0);
@@ -63,7 +63,7 @@ public class Simulation{
 			shufCreatures2 = new ArrayList<Creature>(creatures.subList(numC/2, numC));	//Splits the second half of the List into a separate one
 				if(activityLog) System.out.println("Tick #" + step + "_ Number of Creatures in Array 2: " + shufCreatures2.size() + '\n');
 
-			
+
 			creatures.clear();					//Empties the main Creature List
 			if(!(tempCreature1 == null) && !sim.RIP(tempCreature1)) creatures.add(tempCreature1);	//If there is an odd creature that isn't set to die, add it back to the main List
 
@@ -97,7 +97,7 @@ public class Simulation{
 				}
 			}
 			if(activityLog) System.out.println('\n' + "Tick #" + step + "_ Number of Creatures after pairing but before purge/repopulation: " + creatures.size() + '\n');
-			
+
 			Collections.sort(creatures);											//Resorts the creatures
 			while(creatures.size() > maxCreatures) creatures.remove(0);				//If there are too many creatures, remove the weakest ones
 			while(creatures.size() < minCreatures) creatures.add(new Creature());	//If there are not enough creatures, make new random ones
