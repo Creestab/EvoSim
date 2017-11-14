@@ -16,8 +16,8 @@ public class Simulation{
 
 
 		int numCreatures		=25;		//the number of Creatures to start your simulation with.
-		int minCreatures		=10;		//
-		int maxCreatures		=50;		//
+		int minCreatures		=10;		//if the number of Creatures falls below this number, new ones will be created to match it
+		int maxCreatures		=50;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
 		int numSteps			=100;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in activityLog mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
@@ -55,8 +55,8 @@ public class Simulation{
 			Collections.shuffle(creatures);		//Randomize the creatures indices in the List
 				if(activityLog) System.out.println("Tick #" + step + "_ Number of Creatures before pairing: " + numC);
 			if(numC % 2 == 1){					//If there is an odd amount of creatures, set one aside
-				tempCreature1 = creatures.get(numC - 1);
-				numC--;
+				tempCreature1 = creatures.get(numC - 1);	//Stores the odd creature in a placeholder
+				numC--;							//Reduces the variable for amount of creatures by 1, making it even
 			}
 			shufCreatures1 = new ArrayList<Creature>(creatures.subList(0, numC / 2));	//Splits the first half of the List into a separate one
 				if(activityLog) System.out.println("Tick #" + step + "_ Number of Creatures in Array 1: " + shufCreatures1.size());
@@ -127,7 +127,7 @@ public class Simulation{
 			Thread.sleep(50);
 		}
 		//Simulation Overview
-		System.out.println("Highest Level Creture Recorded:"); HS_XP.print();
-		System.out.println('\n' + "Oldest Creture Recorded:"); HS_Age.print();
+		System.out.println("Highest Level Creature Recorded:"); HS_XP.print();
+		System.out.println('\n' + "Oldest Creature Recorded:"); HS_Age.print();
 	}
 }
