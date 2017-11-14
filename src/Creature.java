@@ -351,19 +351,19 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 */
 	public void levelUp()
 	{
-		level++;
-		xpUntilLevel = xpCurve(level);
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
-				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;
+		level++;						//Increases current level
+		xpUntilLevel += xpCurve(level);	//Calculates the amount of XP needed for the next level
+		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 	//Determines this creatures new max age
+				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + (5 * level);
 
-		if(geneToSeed(geneticCode) % 5 == 0) digestPower++;
-		if(geneToSeed(geneticCode) % 5 == 1) hungerMax++;
-		if(geneToSeed(geneticCode) % 5 == 2 && hungerRate >= .45) hungerRate -= .05;
+		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 0) digestPower++;	//
+		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 1) hungerMax++;
+		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 2 && hungerRate >= .45) hungerRate -= .05;
 			else hungerMax++;
-		if(geneToSeed(geneticCode) % 5 == 3) addDiet(geneticCode, nutrition);
-		if(geneToSeed(geneticCode) % 5 == 4) {
+		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 3) addDiet(geneticCode, nutrition);
+		if(Math.pow(geneToSeed(), 1 + (level / 10)) % 5 == 4) {
 			geneComplexity++;
-			geneticCode += geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());
+			geneticCode += geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());		//Adds new elements to the genetic code to catch up to new complexity
 		}
 	}
 

@@ -18,25 +18,29 @@ public class Simulation{
 		int numCreatures		=25;		//the number of Creatures to start your simulation with.
 		int minCreatures		=10;		//
 		int maxCreatures		=50;		//
-		int numSteps			=25;		//the number of steps this simulation will run while setSteps is =true.
+		int numSteps			=50;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in debug mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=5;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
-
-
+		
+		
 		SimFuncs sim = new SimFuncs();			//Helper Functions
 		ArrayList<Creature> creatures = sim.populate(numCreatures);		//Create a bunch of random creatures
 		ArrayList<Creature> shufCreatures1;		//Array for one half the creatures
 		ArrayList<Creature> shufCreatures2;		//Array for the other half of the creatures
+		Creature HS_XP = creatures.get(0);
+		Creature HS_Age = creatures.get(0);
 		Creature tempCreature1 = null;			//Used for creature comparisons
 		Creature tempCreature2 = null;			//Used for creature comparisons
 		int numC = creatures.size();			//The amount of creatures in our current population
 		int step = 0;							//The step we are currently on
-		while(!setSteps || step < numSteps){	//Runs the loop a set amount of steps
+		while(!setSteps || step < numSteps){	//Runs the loop a set amount of steps			
 			//Beginning of step code.
 			step++;							//Increases current step
 			for(int i = 0; i < numC; i++){	//Calls the basic tick actions for each creature
+				if(creatures.get(i).getXP() > HS_XP.getXP()) HS_XP = creatures.get(i);
+				if(creatures.get(i).getAgeCurrent() > HS_Age.getAgeCurrent()) HS_Age = creatures.get(i);
 				creatures.get(i).tick();
 			}
 			/*
@@ -104,5 +108,8 @@ public class Simulation{
 			}
 			Thread.sleep(50);
 		}
+		//Simulation Overview
+		System.out.println("Highest Level Creture Recorded:"); HS_XP.print();
+		System.out.println('\n' + "Oldest Creture Recorded:"); HS_Age.print();
 	}
 }
