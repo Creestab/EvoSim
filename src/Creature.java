@@ -148,7 +148,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 					n1++;			//Increase the index of the current element in parent 1's diet being look at
 				}
 
-				else if(nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1 && n2 < p2.getNutrition().length()){		//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio or all of parent 1's diet elements have been looked at
+				else if(n2 < p2.getNutrition().length() && nutrition.indexOf(p2.getNutrition().charAt(n2)) == -1){		//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio or all of parent 1's diet elements have been looked at
 					nutrition += p2.getNutrition().charAt(n2);		//Add the current element being looked at in parent 1's diet to the childs diet
 					n2++;			//Increase the index of the current element in parent 1's diet being look at
 				}
