@@ -287,7 +287,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	/**
 	 * Used to increase this Creatures level and stats accordingly.
 	 */
-	public void levelUp()
+	public void levelUp() //Sort the if statements by early to late game. Should be Comp-Up, then HungerMax, then diet+, then digestPower, then HungerRate
 	{
 		level++;						//Increases current level
 		xpUntilLevel += xpCurve(level);	//Calculates the amount of XP needed for the next level
