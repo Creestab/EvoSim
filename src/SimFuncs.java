@@ -10,8 +10,14 @@ import java.util.ArrayList;
  * @date 11/9/17
  */
 public class SimFuncs {
+	
+	int curTick;
+	
 	public SimFuncs() {
-		
+		curTick = -1;
+	}
+	public SimFuncs(int tick) {
+		curTick = tick;
 	}
 
 	/**
@@ -20,8 +26,15 @@ public class SimFuncs {
 	 */
 	public ArrayList<Creature> populate(){
 		ArrayList<Creature> creatures = new ArrayList<Creature>();
-		for(int i = 0; i < 50; i++){
-			creatures.add(new Creature());
+		if(curTick == -1){
+			for(int i = 0; i < 50; i++){
+				creatures.add(new Creature());
+			}
+		}
+		else{
+			for(int i = 0; i < 50; i++){
+				creatures.add(new Creature(curTick));
+			}
 		}
 		return creatures;
 	}
@@ -33,8 +46,15 @@ public class SimFuncs {
 	 */
 	public ArrayList<Creature> populate(int l){
 		ArrayList<Creature> creatures = new ArrayList<Creature>();
-		for(int i = 0; i < l; i++){
-			creatures.add(new Creature());
+		if(curTick == -1){
+			for(int i = 0; i < l; i++){
+				creatures.add(new Creature());
+			}
+		}
+		else{
+			for(int i = 0; i < l; i++){
+				creatures.add(new Creature(curTick));
+			}
 		}
 		return creatures;
 	}
@@ -140,6 +160,8 @@ public class SimFuncs {
 			return '?';
 		}
 	}
+	
+	public void tick(){curTick++;}
 	
 	/**
 	 * Go's through a set of Creatures and prints out all of their info in a neat and concise fassion.

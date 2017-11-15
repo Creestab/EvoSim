@@ -15,25 +15,26 @@ public class Simulation{
 	public static void main(String[] args) throws InterruptedException {
 
 
-		int numCreatures		=500;		//the number of Creatures to start your simulation with.
-		int minCreatures		=100;		//if the number of Creatures falls below this number, new ones will be created to match it
-		int maxCreatures		=1000;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
+		int numCreatures		=50;		//the number of Creatures to start your simulation with.
+		int minCreatures		=10;		//if the number of Creatures falls below this number, new ones will be created to match it
+		int maxCreatures		=100;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
 		int numSteps			=1000;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in activityLog mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=100;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
 
 
-		SimFuncs sim = new SimFuncs();			//Helper Functions
+		SimFuncs sim = new SimFuncs(0);			//Helper Functions
 		ArrayList<Creature> creatures = sim.populate(numCreatures);		//Create a bunch of random creatures
 			if(activityLog) System.out.println("Number of Creatures on Initialization:" + creatures.size() + '\n');
 		ArrayList<Creature> shufCreatures1;		//Array for one half the creatures
 		ArrayList<Creature> shufCreatures2;		//Array for the other half of the creatures
 		Creature HS_XP = creatures.get(0);
 		Creature HS_Age = creatures.get(0);
-		Creature HS_Diet = creatures.get(0);
+		//Creature HS_Diet = creatures.get(0);
+		Creature HS_Code = creatures.get(0);
 		Creature tempCreature1 = null;			//Used for creature comparisons
 		Creature tempCreature2 = null;			//Used for creature comparisons
 		int numC = creatures.size();			//The amount of creatures in our current population
@@ -44,7 +45,8 @@ public class Simulation{
 			for(int i = 0; i < numC; i++){	//Calls the basic tick actions for each creature
 				if(creatures.get(i).getXP() > HS_XP.getXP() && !sim.RIP(creatures.get(i))) HS_XP = creatures.get(i);
 				if(creatures.get(i).getAgeCurrent() > HS_Age.getAgeCurrent() && !sim.RIP(creatures.get(i))) HS_Age = creatures.get(i);
-				if(creatures.get(i).getNutrition().length() > HS_Diet.getNutrition().length() && !sim.RIP(creatures.get(i))) HS_Diet = creatures.get(i);
+				//if(creatures.get(i).getNutrition().length() > HS_Diet.getNutrition().length() && !sim.RIP(creatures.get(i))) HS_Diet = creatures.get(i);
+				if(creatures.get(i).getGeneticCode().length() > HS_Code.getGeneticCode().length() && !sim.RIP(creatures.get(i))) HS_Code = creatures.get(i);
 				creatures.get(i).tick();
 			}
 			//if(activityLog) System.out.println("Tick #" + step + "_ Current XP High Score: "); HS_XP.print();
@@ -81,7 +83,7 @@ public class Simulation{
 					tempCreature2.xpGain(tempCreature1.getLevel() * tempCreature1.sumGenes());	//Gain XP
 					if(!sim.RIP(tempCreature2)) creatures.add(tempCreature2);					//Add creature back into the main List if it isn't set to die
 
-					creatures.add(new Creature(tempCreature1, tempCreature2));					//Add the offspring of the pair to the list
+					creatures.add(new Creature(tempCreature1, tempCreature2, step));					//Add the offspring of the pair to the list
 				}
 				
 				else if(tempCreature1.getHungerRatio() < .75 && sim.whoEatsWho(tempCreature1, tempCreature2)){		//If creature 1 is hungry and is "stronger" than creature 2, it eats it
@@ -108,7 +110,7 @@ public class Simulation{
 
 			Collections.sort(creatures);											//Resorts the creatures
 			while(creatures.size() > maxCreatures) creatures.remove(0);				//If there are too many creatures, remove the weakest ones
-			while(creatures.size() < minCreatures) creatures.add(new Creature());	//If there are not enough creatures, make new random ones
+			while(creatures.size() < minCreatures) creatures.add(new Creature(step));	//If there are not enough creatures, make new random ones
 
 
 
@@ -131,6 +133,7 @@ public class Simulation{
 		//Simulation Overview
 		System.out.println("Highest Level Creature Recorded:"); HS_XP.print();
 		System.out.println('\n' + "Oldest Creature Recorded:"); HS_Age.print();
-		System.out.println('\n' + "Largest Diet Recorded:"); HS_Diet.print();
+		//System.out.println('\n' + "Largest Diet Recorded:"); HS_Diet.print();
+		System.out.println('\n' + "Largest Genetic Code Recorded:"); HS_Code.print();
 	}
 }
