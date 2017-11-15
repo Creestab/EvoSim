@@ -98,6 +98,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		geneSize = (byte)size;
 		geneticCode = genes;
 
+		nutrition = "";
 		for(int i = 0; i < geneComplexity; i++){		//Runs a loop for each level of complexity
 			nutrition = addDiet(geneticCode.substring(0, (int)Math.pow(geneSize, i + 1)), nutrition);	//Calculates its diet for each level of complexity, using gene substring of length size ^ i
 		}
