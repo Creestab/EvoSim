@@ -33,6 +33,7 @@ public class Simulation{
 		ArrayList<Creature> shufCreatures2;		//Array for the other half of the creatures
 		Creature HS_XP = creatures.get(0);
 		Creature HS_Age = creatures.get(0);
+		Creature HS_Diet = creatures.get(0);
 		Creature tempCreature1 = null;			//Used for creature comparisons
 		Creature tempCreature2 = null;			//Used for creature comparisons
 		int numC = creatures.size();			//The amount of creatures in our current population
@@ -43,6 +44,7 @@ public class Simulation{
 			for(int i = 0; i < numC; i++){	//Calls the basic tick actions for each creature
 				if(creatures.get(i).getXP() > HS_XP.getXP() && !sim.RIP(creatures.get(i))) HS_XP = creatures.get(i);
 				if(creatures.get(i).getAgeCurrent() > HS_Age.getAgeCurrent() && !sim.RIP(creatures.get(i))) HS_Age = creatures.get(i);
+				if(creatures.get(i).getNutrition().length() > HS_Diet.getNutrition().length() && !sim.RIP(creatures.get(i))) HS_Diet = creatures.get(i);
 				creatures.get(i).tick();
 			}
 			//if(activityLog) System.out.println("Tick #" + step + "_ Current XP High Score: "); HS_XP.print();
@@ -129,5 +131,6 @@ public class Simulation{
 		//Simulation Overview
 		System.out.println("Highest Level Creature Recorded:"); HS_XP.print();
 		System.out.println('\n' + "Oldest Creature Recorded:"); HS_Age.print();
+		System.out.println('\n' + "Largest Diet Recorded:"); HS_Diet.print();
 	}
 }
