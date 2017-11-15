@@ -137,7 +137,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		int n1 = 0;
 		int n2 = 0;
-		l = (int)Math.floor((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();		//The amount of elements in this creatures diet based on the lengths of the 2 parents diets
+		l = (int)Math.round((p1Weight * (double)l) + (p2Weight * (double)p2.getNutrition().length())) + nutrition.length();		//The amount of elements in this creatures diet based on the lengths of the 2 parents diets
 		if(l >= 26) nutrition = "ABCDEFGHIJKLMNOPQRSTUVQXYZ";
 		else{
 			while(nutrition.length() < l){											//Loop runs while the childs current diet isnt as long as it should be
