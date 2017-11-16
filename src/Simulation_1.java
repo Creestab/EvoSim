@@ -11,7 +11,7 @@ import java.util.Collections;
  * @date 11/16/17
  */
 
-public class Simulation{
+public class Simulation_1{
 	public static void main(String[] args) throws InterruptedException {
 
 
@@ -26,7 +26,7 @@ public class Simulation{
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
 
 
-		SimFuncs sim = new SimFuncs(0);			//Helper Functions
+		SimFuncs sim = new SimFuncs(0, minCreatures, maxCreatures);			//Helper Functions
 		ArrayList<Creature> creatures = sim.populate(numCreatures);		//Create a bunch of random creatures
 			if(activityLog) System.out.println("Number of Creatures on Initialization:" + creatures.size() + '\n');
 		ArrayList<Creature> shufCreatures1;		//Array for one half the creatures
@@ -111,7 +111,7 @@ public class Simulation{
 			Collections.sort(creatures);											//Resorts the creatures
 			while(creatures.size() > maxCreatures) creatures.remove(0);				//If there are too many creatures, remove the weakest ones
 			while(creatures.size() < minCreatures) creatures.add(new Creature(step));	//If there are not enough creatures, make new random ones
-
+			Collections.sort(creatures);
 
 
 			//End of step code.

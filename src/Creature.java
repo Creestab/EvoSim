@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * 
@@ -34,8 +34,8 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		sim = new SimFuncs();
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 2);		//A random number between 2 and 4 inclusive
-		geneticCode = geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
-		nutrition = sortString("" + sim.eleGen(geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
+		geneticCode = sim.geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
+		nutrition = sim.sortString("" + sim.eleGen(sim.geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
@@ -57,8 +57,8 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		sim = new SimFuncs();
 		geneComplexity = 1;
 		geneSize = (byte)((Math.random() * 3) + 2);		//A random number between 2 and 4 inclusive
-		geneticCode = geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
-		nutrition = sortString("" + sim.eleGen(geneToSeed(geneticCode)));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
+		geneticCode = sim.geneGen(geneSize);				//Sets this creatures genes to a random string of elements of length size
+		nutrition = sim.sortString("" + sim.eleGen(geneToSeed()));	//Sets this creatures diet to a sorted array of elements based off of its genetic seed
 		level = 1;
 		xpCurrent = 0;
 		xpUntilLevel = xpCurve(level);		//Calls the xp curve equation to determine the xp requirement for the next level
@@ -89,14 +89,14 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		geneComplexity = complex;
 		geneSize = (byte)size;
-		geneticCode = geneGen(geneSize);	//Sets this creatures genes to a random string of elements of length size
+		geneticCode = sim.geneGen(geneSize);	//Sets this creatures genes to a random string of elements of length size
 
-		nutrition = "" + sim.eleGen(geneToSeed(geneticCode));		//Sets this creatures diet to an array of elements based off of its genetic seed
+		nutrition = "" + sim.eleGen(geneToSeed());		//Sets this creatures diet to an array of elements based off of its genetic seed
 		for(int i = 1; i < geneComplexity; i++){				//Runs a loop for each level of complexity besides the first
-			geneticCode += geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());	//Increases the size of the complexity tree of elements, adding seeded elements up to length size ^ (i+1)
-			nutrition = addDiet(geneticCode, nutrition);		//Adds a new diet option (if unique element determined) for each complexity
+			geneticCode += sim.geneGen(((int)Math.pow(geneSize, i + 1)) - geneticCode.length());	//Increases the size of the complexity tree of elements, adding seeded elements up to length size ^ (i+1)
+			nutrition = sim.addDiet(geneticCode, nutrition, level);		//Adds a new diet option (if unique element determined) for each complexity
 		}
-		nutrition = sortString(nutrition);	//Sorts the diet alphabetically
+		nutrition = sim.sortString(nutrition);	//Sorts the diet alphabetically
 
 		ageCurrent = 0;
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
@@ -126,9 +126,9 @@ public class Creature implements Comparable<Creature>, Cloneable {
 
 		nutrition = "";
 		for(int i = 0; i < geneComplexity; i++){		//Runs a loop for each level of complexity
-			nutrition = addDiet(geneticCode.substring(0, (int)Math.pow(geneSize, i + 1)), nutrition);	//Calculates its diet for each level of complexity, using gene substring of length size ^ i
+			nutrition = sim.addDiet(geneticCode.substring(0, (int)Math.pow(geneSize, i + 1)), nutrition, level);	//Calculates its diet for each level of complexity, using gene substring of length size ^ i
 		}
-		nutrition = sortString(nutrition);		//Sorts the diet alphabetically
+		nutrition = sim.sortString(nutrition);		//Sorts the diet alphabetically
 
 		ageCurrent = 0;
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
@@ -143,8 +143,8 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 */
 	public Creature(Creature p1, Creature p2){
 		sim = new SimFuncs();
-		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
-		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
+		double p1Val = (int)Math.pow(((p1.geneToSeed() % 10) + sim.sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
+		double p2Val = (int)Math.pow(((p2.geneToSeed() % 10) + sim.sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
 		double p1Weight = p1Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
 		double p2Weight = p2Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
 
@@ -197,7 +197,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		hungerRate = 1;
 
 		ageCurrent = 0;
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+		ageMax = (sumGenes() / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		if(p1.getGeneration() > p2.getGeneration()) generation = p1.getGeneration() + 1;
 		else generation = p2.getGeneration() + 1;
@@ -210,8 +210,8 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 */
 	public Creature(Creature p1, Creature p2, int tick){
 		sim = new SimFuncs();
-		double p1Val = (int)Math.pow(((geneToSeed(p1.getGeneticCode()) % 10) + sumString(p1.getGeneticCode())) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
-		double p2Val = (int)Math.pow(((geneToSeed(p2.getGeneticCode()) % 10) + sumString(p2.getGeneticCode())) * p2.getAgeMax(), Math.log(p2.getLevel()));
+		double p1Val = (int)Math.pow(((p1.geneToSeed() % 10) + p1.sumGenes()) * p2.getAgeMax(), Math.log(p1.getLevel())); 		//Equations to determine genetic prowess when deciding on offspring genes
+		double p2Val = (int)Math.pow(((p2.geneToSeed() % 10) + p2.sumGenes()) * p2.getAgeMax(), Math.log(p2.getLevel()));
 		double p1Weight = p1Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
 		double p2Weight = p2Val / (p1Val + p2Val);		//A ration of this creatures prowess compared to the others
 
@@ -264,7 +264,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		hungerRate = 1;
 
 		ageCurrent = 0;
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
+		ageMax = (sumGenes() / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		if(p1.getGeneration() > p2.getGeneration()) generation = p1.getGeneration() + 1;
 		else generation = p2.getGeneration() + 1;
@@ -335,50 +335,12 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	}
 
 	/**
-	 * Generates a genetic code of a defined length.
-	 * @param length the number of elements in this genetic code.
-	 * @return the genetic code.
-	 */
-	public String geneGen(int length){
-		String gene = "";
-
-		for(int i = 0; i < length; i++){
-			gene += sim.eleGen();
-		}
-
-		return gene;
-	}
-
-	/**
-	 * Attempts to add a new element into a Creatures nutrition.
-	 * @param genes the Creatures geneticCode.
-	 * @param diet the Creatures nutrition.
-	 * @return the Creatures updated nutrition.
-	 */
-	public String addDiet(String genes, String diet){
-		char cur = sim.eleGen(geneToSeed(genes) + ((int)(Math.random() * level * 16) % 150));
-		if(diet.indexOf(cur) == -1) return diet + cur;
-		else return diet;
-	}
-
-	/**
 	 * Uses this creatures geneticCode to generate a seed.
 	 * @return the seed.
 	 */
 	public int geneToSeed(){
-		return (int)(Math.pow(Math.log(productString(geneticCode)), (sumString(geneticCode) % 3)) + sumString(geneticCode));
+		return (int)(Math.pow(Math.log(productGenes()), (sumGenes() % 3)) + sumGenes());
 	}
-
-	/**
-	 * Uses a genetic code to generate a seed.
-	 * @param genes the genetic code used to generate the seed.
-	 * @return the seed.
-	 */
-	public int geneToSeed(String genes){
-		return (int)(Math.pow(Math.log(productString(genes)), (sumString(genes) % 3)) + sumString(genes));
-	}
-
-
 
 	/**
 	 * Used to increase this Creatures level and stats accordingly.
@@ -387,7 +349,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	{
 		level++;						//Increases current level
 		xpUntilLevel += xpCurve(level);	//Calculates the amount of XP needed for the next level
-		ageMax = (sumString(geneticCode) / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 	//Determines this creatures new max age
+		ageMax = (sumGenes() / 4) + (int)(3 * Math.pow(geneComplexity, 2)) 	//Determines this creatures new max age
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + (5 * level);
 
 		if((int)(geneToSeed() + (Math.random() * (level + 5))) % 5 == 0) digestPower++;	//
@@ -396,10 +358,10 @@ public class Creature implements Comparable<Creature>, Cloneable {
 			if(hungerRate >= .45) hungerRate -= .05;
 			else hungerMax++;
 		}
-		if((int)(geneToSeed() + (Math.random() * (level + 5))) % 5 == 3) addDiet(geneticCode, nutrition);
+		if((int)(geneToSeed() + (Math.random() * (level + 5))) % 5 == 3) nutrition += sim.addDiet(geneticCode, nutrition, level);
 		if((int)(geneToSeed() + (Math.random() * (level + 5))) % 5 == 4) {
 			geneComplexity++;
-			geneticCode += geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());		//Adds new elements to the genetic code to catch up to new complexity
+			geneticCode += sim.geneGen((int)Math.pow(geneSize, geneComplexity) - geneticCode.length());		//Adds new elements to the genetic code to catch up to new complexity
 		}
 	}
 
@@ -418,17 +380,6 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	 */
 	public int xpCurve(int lvl){
 		return ((int)(5000 * Math.pow(1.03, lvl))) -5050;
-	}
-
-	/**
-	 * Sorts the characters of a String.
-	 * @param s the String.
-	 * @return the sorted String.
-	 */
-	public String sortString(String s){
-		char[] sChar = s.toCharArray();
-		Arrays.sort(sChar);
-		return new String(sChar);
 	}
 
 	/**
@@ -477,52 +428,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		return sum;
 	}
 
-	/**
-	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
-	 * @param s the String
-	 * @return the sum.
-	 */
-	public int sumString(String s){
-		int sum = 0;
-
-		int length = s.length();
-		char cur;
-		for(int i = 0; i < length; i++){
-			cur = s.charAt(i);
-
-			if(cur == 'A') sum += 1;		
-			else if(cur == 'B') sum += 2;	
-			else if(cur == 'C') sum += 3;
-			else if(cur == 'D') sum += 4;
-			else if(cur == 'E') sum += 5;
-			else if(cur == 'F') sum += 6;
-			else if(cur == 'G') sum += 7;
-			else if(cur == 'H') sum += 8;
-			else if(cur == 'I') sum += 9;
-			else if(cur == 'J') sum += 10;
-			else if(cur == 'K') sum += 11;
-			else if(cur == 'L') sum += 12;
-			else if(cur == 'M') sum += 13;
-			else if(cur == 'N') sum += 14;
-			else if(cur == 'O') sum += 15;
-			else if(cur == 'P') sum += 16;
-			else if(cur == 'Q') sum += 17;
-			else if(cur == 'R') sum += 18;
-			else if(cur == 'S') sum += 19;
-			else if(cur == 'T') sum += 20;
-			else if(cur == 'U') sum += 21;
-			else if(cur == 'V') sum += 22;
-			else if(cur == 'W') sum += 23;
-			else if(cur == 'X') sum += 24;
-			else if(cur == 'Y') sum += 25;
-			else if(cur == 'Z') sum += 26;
-			else{
-				return '?';
-			}
-		}
-
-		return sum;
-	}
+	
 
 	/**
 	 * Multiplies the character values of this Creatures geneticCode [A = 1, B = 2, C = 3, ext].
@@ -536,53 +442,6 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		char cur;
 		for(int i = 0; i < length; i++){
 			cur = geneticCode.charAt(i);
-
-			if(cur == 'A') prod *= 1;		
-			else if(cur == 'B') prod *= 2;	
-			else if(cur == 'C') prod *= 3;
-			else if(cur == 'D') prod *= 4;
-			else if(cur == 'E') prod *= 5;
-			else if(cur == 'F') prod *= 6;
-			else if(cur == 'G') prod *= 7;
-			else if(cur == 'H') prod *= 8;
-			else if(cur == 'I') prod *= 9;
-			else if(cur == 'J') prod *= 10;
-			else if(cur == 'K') prod *= 11;
-			else if(cur == 'L') prod *= 12;
-			else if(cur == 'M') prod *= 13;
-			else if(cur == 'N') prod *= 14;
-			else if(cur == 'O') prod *= 15;
-			else if(cur == 'P') prod *= 16;
-			else if(cur == 'Q') prod *= 17;
-			else if(cur == 'R') prod *= 18;
-			else if(cur == 'S') prod *= 19;
-			else if(cur == 'T') prod *= 20;
-			else if(cur == 'U') prod *= 21;
-			else if(cur == 'V') prod *= 22;
-			else if(cur == 'W') prod *= 23;
-			else if(cur == 'X') prod *= 24;
-			else if(cur == 'Y') prod *= 25;
-			else if(cur == 'Z') prod *= 26;
-			else{
-				return '?';
-			}
-		}
-
-		return prod;
-	}
-
-	/**
-	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
-	 * @param s the String
-	 * @return the product.
-	 */
-	public int productString(String s){
-		int prod = 0;
-
-		int length = s.length();
-		char cur;
-		for(int i = 0; i < length; i++){
-			cur = s.charAt(i);
 
 			if(cur == 'A') prod *= 1;		
 			else if(cur == 'B') prod *= 2;	
