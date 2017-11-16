@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * @author Chris Berghoff
- * @version 0.1.3
+ * @version 0.2.1
  * @date 11/16/17
  */
 public class Creature implements Comparable<Creature>, Cloneable {
