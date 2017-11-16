@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * @author Chris Berghoff
- * @version 0.1.2
+ * @version 0.1.3
  * @date 11/16/17
  */
 public class SimFuncs {

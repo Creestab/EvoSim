@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * @author Chris Berghoff
- * @version 0.1.2
+ * @version 0.1.3
  * @date 11/16/17
  */
 public class Creature implements Comparable<Creature>, Cloneable {
@@ -25,6 +25,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	protected int ageMax;				//The amount of ticks this creature will live for
 	protected int ageCurrent;			//The current amount ticks this creature has lived
 	protected int generation;			//The amount of ancestors to this Creature + 1
+	protected Creature[] parents;
 	protected int birthtick;			//The step that this creature was born on. -1 if not applicable.
 
 	/**
@@ -47,6 +48,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;	 	//Determines how long this creature will live based on their genetic code
 		generation = 1;
+		parents = null;
 		birthtick = -1;
 	}
 	/**
@@ -70,14 +72,15 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;	 	//Determines how long this creature will live based on their genetic code
 		generation = 1;
+		parents = null;
 		birthtick = tick;
 	}
 	/**
 	 * Creates a level 1 Creature with a defined gene complexity and size but a random code.
-	 * @param complex this Creatures geneComplexity.
 	 * @param size this Creatures geneSize.
+	 * @param complex this Creatures geneComplexity.
 	 */
-	public Creature(int complex, int size){
+	public Creature(int size, int complex){
 		sim = new SimFuncs();
 		level = 1;
 		xpCurrent = 0;
@@ -102,15 +105,16 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		generation = 1;
+		parents = null;
 		birthtick = -1;
 	}
 	/**
 	 * Creates a level 1 Creature with a defined gene code, complexity, and size.
 	 * @param genes this Creatures geneticCode.
-	 * @param complex this Creatures geneComplexity.
 	 * @param size this Creatures geneSize.
+	 * @param complex this Creatures geneComplexity.
 	 */
-	public Creature(String genes, int complex, int size){
+	public Creature(String genes, int size, int complex){
 		sim = new SimFuncs();
 		level = 1;
 		xpCurrent = 0;
@@ -134,6 +138,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		ageMax = (3 * ((geneToSeed() % 9) + 1)) + (int)(4 * Math.pow(geneComplexity, 2)) 
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		generation = 1;
+		parents = null;
 		birthtick = -1;
 	}
 	/**
@@ -201,6 +206,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		if(p1.getGeneration() > p2.getGeneration()) generation = p1.getGeneration() + 1;
 		else generation = p2.getGeneration() + 1;
+		parents = new Creature[]{p1, p2};
 		birthtick = -1;
 	}
 	/**
@@ -268,6 +274,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 				- (int)(Math.pow(geneSize * geneticCode.length(), .5)) + 5;		//Determines how long this creature will live based on their genetic code
 		if(p1.getGeneration() > p2.getGeneration()) generation = p1.getGeneration() + 1;
 		else generation = p2.getGeneration() + 1;
+		parents = new Creature[]{p1, p2};
 		birthtick = tick;
 	}
 
@@ -428,7 +435,7 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		return sum;
 	}
 
-	
+
 
 	/**
 	 * Multiplies the character values of this Creatures geneticCode [A = 1, B = 2, C = 3, ext].
@@ -544,6 +551,9 @@ public class Creature implements Comparable<Creature>, Cloneable {
 	public int getGeneration(){
 		return generation;
 	}
+	public Creature[] getParents(){
+		return parents;
+	}
 	public int getBirthtick(){
 		return birthtick;
 	}
@@ -569,26 +579,49 @@ public class Creature implements Comparable<Creature>, Cloneable {
 		System.out.println("Current Age: " + ageCurrent);
 		System.out.println("Age of Death: " + ageMax);
 		System.out.println("Generation: " + generation);
+		if(parents != null) System.out.println("Parents: " + parents[0].getGeneticCodeFormatted() + ", " + parents[0].getGeneticCodeFormatted());
 		if(birthtick != -1) System.out.println("Birthtick: " + birthtick);
 	}
 
 	@Override
 	public String toString(){
-		return 	"geneSize: " + geneSize + '\n' +
-				"geneComplexity: " + geneComplexity + '\n' +
-				"geneticCode: " + geneticCode + '\n' +
-				"nutrition: " + nutrition + '\n' +
-				"level: " + level + '\n' +
-				"xpCurrent: " + xpCurrent + '\n' +
-				"xpUntilLevel: " + xpUntilLevel + '\n' +
-				"digestPower: " + digestPower + '\n' +
-				"hungerMax: " + hungerMax + '\n' + 
-				"hungerCurrent: " + hungerMax + '\n' +
-				"hungerRate: " + hungerRate + '\n' +
-				"ageMax: " + ageMax + '\n' +
-				"ageCurrent: " + ageCurrent + '\n' +
-				"generation: " + generation + '\n' +
-				"birthtick: " + birthtick + '\n';
+		if(parents == null){
+			return 	"geneSize: " + geneSize + '\n' +
+					"geneComplexity: " + geneComplexity + '\n' +
+					"geneticCode: " + geneticCode + '\n' +
+					"nutrition: " + nutrition + '\n' +
+					"level: " + level + '\n' +
+					"xpCurrent: " + xpCurrent + '\n' +
+					"xpUntilLevel: " + xpUntilLevel + '\n' +
+					"digestPower: " + digestPower + '\n' +
+					"hungerMax: " + hungerMax + '\n' + 
+					"hungerCurrent: " + hungerMax + '\n' +
+					"hungerRate: " + hungerRate + '\n' +
+					"ageMax: " + ageMax + '\n' +
+					"ageCurrent: " + ageCurrent + '\n' +
+					"generation: " + generation + '\n' +
+					"birthtick: " + birthtick + '\n';
+		}
+		else{
+			return 	"geneSize: " + geneSize + '\n' +
+					"geneComplexity: " + geneComplexity + '\n' +
+					"geneticCode: " + geneticCode + '\n' +
+					"nutrition: " + nutrition + '\n' +
+					"level: " + level + '\n' +
+					"xpCurrent: " + xpCurrent + '\n' +
+					"xpUntilLevel: " + xpUntilLevel + '\n' +
+					"digestPower: " + digestPower + '\n' +
+					"hungerMax: " + hungerMax + '\n' + 
+					"hungerCurrent: " + hungerMax + '\n' +
+					"hungerRate: " + hungerRate + '\n' +
+					"ageMax: " + ageMax + '\n' +
+					"ageCurrent: " + ageCurrent + '\n' +
+					"generation: " + generation + '\n' +
+					"parent 1: " + parents[0].getGeneticCodeFormatted() + '\n' +
+					"parent 2: " + parents[1].getGeneticCodeFormatted() + '\n' +
+					"birthtick: " + birthtick + '\n';
+		}
+		
 	}
 	public int compareTo(Creature c) {
 		return getWorth() - c.getWorth();
