@@ -7,8 +7,8 @@ import java.util.Collections;
 
 /**
  * @author Chris Berghoff
- * @version 0.0.1
- * @date 11/9/17
+ * @version 0.1.2
+ * @date 11/16/17
  */
 
 public class Simulation{
@@ -18,10 +18,10 @@ public class Simulation{
 		int numCreatures		=50;		//the number of Creatures to start your simulation with.
 		int minCreatures		=10;		//if the number of Creatures falls below this number, new ones will be created to match it
 		int maxCreatures		=100;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
-		int numSteps			=1000;		//the number of steps this simulation will run while setSteps is =true.
+		int numSteps			=100;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in activityLog mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=10;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=100;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
 

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 /**
  * @author Chris Berghoff
- * @version 0.1.1
- * @date 11/9/17
+ * @version 0.1.2
+ * @date 11/16/17
  */
 public class SimFuncs {
 	
