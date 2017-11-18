@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * 
@@ -6,12 +6,27 @@ import java.util.ArrayList;
 
 /**
  * @author Chris Berghoff
- * @version 0.1.1
- * @date 11/9/17
+ * @version 0.2.1
+ * @date 11/16/17
  */
 public class SimFuncs {
+	
+	int step;
+	int minCreatures;
+	int maxCreatures;
+	ArrayList<Creature> HS;
+	
 	public SimFuncs() {
-		
+		step = -1;
+		minCreatures = 0;
+		maxCreatures = 100000;
+		HS = new ArrayList<Creature>();
+	}
+	public SimFuncs(int tick, int minC, int maxC) {
+		step = tick;
+		minCreatures = minC;
+		maxCreatures = maxC;
+		HS = new ArrayList<Creature>();
 	}
 
 	/**
@@ -20,8 +35,15 @@ public class SimFuncs {
 	 */
 	public ArrayList<Creature> populate(){
 		ArrayList<Creature> creatures = new ArrayList<Creature>();
-		for(int i = 0; i < 50; i++){
-			creatures.add(new Creature());
+		if(step == -1){
+			for(int i = 0; i < 50; i++){
+				creatures.add(new Creature());
+			}
+		}
+		else{
+			for(int i = 0; i < 50; i++){
+				creatures.add(new Creature(step));
+			}
 		}
 		return creatures;
 	}
@@ -33,10 +55,29 @@ public class SimFuncs {
 	 */
 	public ArrayList<Creature> populate(int l){
 		ArrayList<Creature> creatures = new ArrayList<Creature>();
-		for(int i = 0; i < l; i++){
-			creatures.add(new Creature());
+		if(step == -1){
+			for(int i = 0; i < l; i++){
+				creatures.add(new Creature());
+			}
+		}
+		else{
+			for(int i = 0; i < l; i++){
+				creatures.add(new Creature(step));
+			}
 		}
 		return creatures;
+	}
+	
+	public void tick(ArrayList<Creature> creatures){
+		step++;
+		int numC = creatures.size();
+		for(int i = 0; i < numC; i++){	//Calls the basic tick actions for each creature
+			if(creatures.get(i).getXP() > HS.get(0).getXP() && !RIP(creatures.get(i))) HS.set(0, creatures.get(i));
+			if(creatures.get(i).getAgeCurrent() > HS.get(1).getAgeCurrent() && !RIP(creatures.get(i))) HS.set(1, creatures.get(i));
+			//if(creatures.get(i).getNutrition().length() > HS.get().getNutrition().length() && !RIP(creatures.get(i))) HS.set(, creatures.get(i));
+			if(creatures.get(i).getGeneticCode().length() > HS.get(2).getGeneticCode().length() && !RIP(creatures.get(i))) HS.set(2, creatures.get(i));
+			creatures.get(i).tick();
+		}
 	}
 	
 	/**
@@ -51,6 +92,18 @@ public class SimFuncs {
 	}
 	
 	/**
+	 * Attempts to add a new element into a Creatures nutrition.
+	 * @param genes the Creatures geneticCode.
+	 * @param diet the Creatures nutrition.
+	 * @return the Creatures updated nutrition.
+	 */
+	public String addDiet(String genes, String diet, int lvl){
+		char cur = eleGen(geneToSeed(genes) + ((int)(Math.random() * lvl * 16) % 150));
+		if(diet.indexOf(cur) == -1) return diet + cur;
+		else return diet;
+	}
+	
+	/**
 	 * Determines if two creatures are compatible for breeding.
 	 * @param c1 is a creature in a pair.
 	 * @param c2 is the other creature in a pair.
@@ -62,6 +115,39 @@ public class SimFuncs {
 	
 	public boolean RIP(Creature c) {
 		return (c.getAgeCurrent() >= c.getAgeMax() || c.getHungerCurrent() <= 0);
+	}
+	
+	public ArrayList<Creature> popAdjust(ArrayList<Creature> creatures){
+		Collections.sort(creatures);											//Resorts the creatures
+		while(creatures.size() > maxCreatures) creatures.remove(0);				//If there are too many creatures, remove the weakest ones
+		while(creatures.size() < minCreatures) creatures.add(new Creature(step));	//If there are not enough creatures, make new random ones
+		Collections.sort(creatures);
+		
+		return creatures;
+	}
+	
+	/**
+	 * Uses a genetic code to generate a seed.
+	 * @param genes the genetic code used to generate the seed.
+	 * @return the seed.
+	 */
+	public int geneToSeed(String genes){
+		return (int)(Math.pow(Math.log(productString(genes)), (sumString(genes) % 3)) + sumString(genes));
+	}
+	
+	/**
+	 * Generates a genetic code of a defined length.
+	 * @param length the number of elements in this genetic code.
+	 * @return the genetic code.
+	 */
+	public String geneGen(int length){
+		String gene = "";
+
+		for(int i = 0; i < length; i++){
+			gene += eleGen();
+		}
+
+		return gene;
 	}
 	
 	/**
@@ -139,6 +225,111 @@ public class SimFuncs {
 		else{
 			return '?';
 		}
+	}
+	
+	/**
+	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
+	 * @param s the String
+	 * @return the sum.
+	 */
+	public int sumString(String s){
+		int sum = 0;
+
+		int length = s.length();
+		char cur;
+		for(int i = 0; i < length; i++){
+			cur = s.charAt(i);
+
+			if(cur == 'A') sum += 1;		
+			else if(cur == 'B') sum += 2;	
+			else if(cur == 'C') sum += 3;
+			else if(cur == 'D') sum += 4;
+			else if(cur == 'E') sum += 5;
+			else if(cur == 'F') sum += 6;
+			else if(cur == 'G') sum += 7;
+			else if(cur == 'H') sum += 8;
+			else if(cur == 'I') sum += 9;
+			else if(cur == 'J') sum += 10;
+			else if(cur == 'K') sum += 11;
+			else if(cur == 'L') sum += 12;
+			else if(cur == 'M') sum += 13;
+			else if(cur == 'N') sum += 14;
+			else if(cur == 'O') sum += 15;
+			else if(cur == 'P') sum += 16;
+			else if(cur == 'Q') sum += 17;
+			else if(cur == 'R') sum += 18;
+			else if(cur == 'S') sum += 19;
+			else if(cur == 'T') sum += 20;
+			else if(cur == 'U') sum += 21;
+			else if(cur == 'V') sum += 22;
+			else if(cur == 'W') sum += 23;
+			else if(cur == 'X') sum += 24;
+			else if(cur == 'Y') sum += 25;
+			else if(cur == 'Z') sum += 26;
+			else{
+				return '?';
+			}
+		}
+
+		return sum;
+	}
+	
+	/**
+	 * Sorts the characters of a String.
+	 * @param s the String.
+	 * @return the sorted String.
+	 */
+	public String sortString(String s){
+		char[] sChar = s.toCharArray();
+		Arrays.sort(sChar);
+		return new String(sChar);
+	}
+	
+	/**
+	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
+	 * @param s the String
+	 * @return the product.
+	 */
+	public int productString(String s){
+		int prod = 0;
+
+		int length = s.length();
+		char cur;
+		for(int i = 0; i < length; i++){
+			cur = s.charAt(i);
+
+			if(cur == 'A') prod *= 1;		
+			else if(cur == 'B') prod *= 2;	
+			else if(cur == 'C') prod *= 3;
+			else if(cur == 'D') prod *= 4;
+			else if(cur == 'E') prod *= 5;
+			else if(cur == 'F') prod *= 6;
+			else if(cur == 'G') prod *= 7;
+			else if(cur == 'H') prod *= 8;
+			else if(cur == 'I') prod *= 9;
+			else if(cur == 'J') prod *= 10;
+			else if(cur == 'K') prod *= 11;
+			else if(cur == 'L') prod *= 12;
+			else if(cur == 'M') prod *= 13;
+			else if(cur == 'N') prod *= 14;
+			else if(cur == 'O') prod *= 15;
+			else if(cur == 'P') prod *= 16;
+			else if(cur == 'Q') prod *= 17;
+			else if(cur == 'R') prod *= 18;
+			else if(cur == 'S') prod *= 19;
+			else if(cur == 'T') prod *= 20;
+			else if(cur == 'U') prod *= 21;
+			else if(cur == 'V') prod *= 22;
+			else if(cur == 'W') prod *= 23;
+			else if(cur == 'X') prod *= 24;
+			else if(cur == 'Y') prod *= 25;
+			else if(cur == 'Z') prod *= 26;
+			else{
+				return '?';
+			}
+		}
+
+		return prod;
 	}
 	
 	/**
