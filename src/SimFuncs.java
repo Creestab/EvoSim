@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * @author Chris Berghoff
  * @version 0.2.1
- * @date 11/16/17
+ * @date 11/19/17
  */
 public class SimFuncs {
 	
@@ -18,6 +18,12 @@ public class SimFuncs {
 	
 	public SimFuncs() {
 		step = -1;
+		minCreatures = 0;
+		maxCreatures = 100000;
+		HS = new ArrayList<Creature>();
+	}
+	public SimFuncs(int tick) {
+		step = tick;
 		minCreatures = 0;
 		maxCreatures = 100000;
 		HS = new ArrayList<Creature>();
@@ -87,8 +93,8 @@ public class SimFuncs {
 	 * @return if true, c1 eats c2. If false, c2 eats c1.
 	 */
 	public boolean whoEatsWho(Creature c1, Creature c2){
-		return Math.pow(c1.getLevel(), c1.getGeneComplexity()) * ((c1.geneToSeed() % 3) + 1) * Math.floor(c1.getHungerCurrent() / c1.getHungerMax()) 
-				> Math.pow(c2.getLevel(), c2.getGeneComplexity()) * ((c2.geneToSeed() % 3) + 1) * Math.floor(c2.getHungerCurrent() / c2.getHungerMax());
+		return Math.pow(c1.getLevel(), c1.getGeneComplexity()) * c1.getHungerRatio() 
+				> Math.pow(c2.getLevel(), c2.getGeneComplexity()) * c1.getHungerRatio();
 	}
 	
 	/**
@@ -101,6 +107,51 @@ public class SimFuncs {
 		char cur = eleGen(geneToSeed(genes) + ((int)(Math.random() * lvl * 16) % 150));
 		if(diet.indexOf(cur) == -1) return diet + cur;
 		else return diet;
+	}
+	
+	public String addDiet(Creature p1, Creature p2){
+		double ratio = p1.getWorth() / (p1.getWorth() + p2.getWorth());
+		int p1Len = p1.getDiet().length();
+		int p2Len = p2.getDiet().length();
+		
+		int len = (p1Len + p2Len) / 2;
+		String diet = "";
+		for(int i = 0; i < p1Len; i++){
+			for(int j = 0; j < p2Len; j++){
+				if(p1.getDiet().charAt(i) == p2.getDiet().charAt(j)) diet += p1.getDiet().charAt(i);
+			}
+		}
+		
+		int i = 0;
+		int j = 0;
+		while(diet.length() < len){
+			if(i < p1Len && Math.random() < ratio){
+				if(diet.indexOf(p1.getDiet().charAt(i)) == -1) diet += p1.getDiet().charAt(i);
+				i++;
+			}
+			else if(j < p2Len){
+				if(diet.indexOf(p2.getDiet().charAt(i)) == -1) diet += p2.getDiet().charAt(i);
+				j++;
+			}
+			else{
+				char temp = eleGen();
+				if(diet.indexOf(temp) == -1) diet += temp;
+			}
+		}
+		
+		return diet;
+	}
+	
+	public String geneMerge(Creature p1, Creature p2, int len) {
+		double ratio = p1.getWorth() / (p1.getWorth() + p2.getWorth());
+		
+		String genes = "";
+		for(int i = 0; i < len; i++){						//Runs a loop for each element in this creatures genes
+			if(Math.random() < ratio) genes += p1.getGeneticCode().charAt(i);		//If a random double x:{0 >= x < 1} is less than parent 1's prowess ratio, the child's element at gene index i will be parent 1's element at gene index i
+			else genes += p2.getGeneticCode().charAt(i);			//If a random double x:{0 >= x < 1} is greater than parent 1's prowess ratio, the child's element at gene index i will be parent 2's element at gene index i
+		}
+		
+		return genes;
 	}
 	
 	/**
@@ -126,13 +177,17 @@ public class SimFuncs {
 		return creatures;
 	}
 	
+	public int xpCurve(int lvl){
+		return ((int)(5000 * Math.pow(1.03, lvl))) -5050;
+	}
+	
 	/**
 	 * Uses a genetic code to generate a seed.
 	 * @param genes the genetic code used to generate the seed.
 	 * @return the seed.
 	 */
 	public int geneToSeed(String genes){
-		return (int)(Math.pow(Math.log(productString(genes)), (sumString(genes) % 3)) + sumString(genes));
+		return (int)(Math.pow(Math.log(productString(genes)), (sumString(genes) % 3) + 1) + sumString(genes));
 	}
 	
 	/**
@@ -228,6 +283,17 @@ public class SimFuncs {
 	}
 	
 	/**
+	 * Sorts the characters of a String.
+	 * @param s the String.
+	 * @return the sorted String.
+	 */
+	public String sortString(String s){
+		char[] sChar = s.toCharArray();
+		Arrays.sort(sChar);
+		return new String(sChar);
+	}
+	
+	/**
 	 * Sums the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
 	 * @return the sum.
@@ -275,23 +341,12 @@ public class SimFuncs {
 	}
 	
 	/**
-	 * Sorts the characters of a String.
-	 * @param s the String.
-	 * @return the sorted String.
-	 */
-	public String sortString(String s){
-		char[] sChar = s.toCharArray();
-		Arrays.sort(sChar);
-		return new String(sChar);
-	}
-	
-	/**
 	 * Multiplies the character values of a String [A = 1, B = 2, C = 3, ext].
 	 * @param s the String
 	 * @return the product.
 	 */
 	public int productString(String s){
-		int prod = 0;
+		int prod = 1;
 
 		int length = s.length();
 		char cur;
@@ -330,6 +385,49 @@ public class SimFuncs {
 		}
 
 		return prod;
+	}
+	
+	public int funkyString(String s){
+		int num = 0;
+
+		int length = s.length();
+		char cur;
+		for(int i = 0; i < length; i++){
+			cur = s.charAt(i);
+
+			if(cur == 'A') num -= 1;		
+			else if(cur == 'B') num += 1;	
+			else if(cur == 'C') num += 1;
+			else if(cur == 'D') num += 5;
+			else if(cur == 'E') num += 5;
+			else if(cur == 'F') num += 5;
+			else if(cur == 'G') num += 5;
+			else if(cur == 'H') num += 10;
+			else if(cur == 'I') num += 10;
+			else if(cur == 'J') num += 10;
+			else if(cur == 'K') num += 10;
+			else if(cur == 'L') num += 10;
+			else if(cur == 'M') num += 10;
+			else if(cur == 'N') num += 10;
+			else if(cur == 'O') num -= 10;
+			else if(cur == 'P') num += productString(s) / (Math.pow(num, 2) + 1);
+			else if(cur == 'Q') num += 15;
+			else if(cur == 'R') num += 15;
+			else if(cur == 'S') num += sumString(s) / (num + 1);
+			else if(cur == 'T') num += 20;
+			else if(cur == 'U') num += 20;
+			else if(cur == 'V') num += 20;
+			else if(cur == 'W') num += 25;
+			else if(cur == 'X') num -= 25;
+			else if(cur == 'Y') num += num / 3;
+			else if(cur == 'Z') num += num;
+			else{
+				return '?';
+			}
+		}
+
+		if(num < 0) return 0;
+		else return num;
 	}
 	
 	/**

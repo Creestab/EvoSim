@@ -15,13 +15,13 @@ public class Simulation_1{
 	public static void main(String[] args) throws InterruptedException {
 
 
-		int numCreatures		=50;		//the number of Creatures to start your simulation with.
+		int numCreatures		=25;		//the number of Creatures to start your simulation with.
 		int minCreatures		=10;		//if the number of Creatures falls below this number, new ones will be created to match it
-		int maxCreatures		=100;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
-		int numSteps			=100;		//the number of steps this simulation will run while setSteps is =true.
+		int maxCreatures		=50;		//if the number of Creatures is higher than this number, the weakest creatures will be removed to match it
+		int numSteps			=10;		//the number of steps this simulation will run while setSteps is =true.
 		boolean setSteps 		=true;		//set to false for unlimited simulation. (NOTE: only do this in activityLog mode)
 		boolean printCreatures	=true;		//If true, prints all of your Creatures every certain number of steps.
-		int stepsPerPrint		=100;		//The number of steps in between each Creature set printing.
+		int stepsPerPrint		=1;		//The number of steps in between each Creature set printing.
 		boolean printToFile		=false;		//If true, saves Creature printings to a file instead of to Terminal.
 		boolean activityLog		=true;		//Prints activity within each tick like breeding, eating, and other stats. Good for debugging.
 
@@ -77,10 +77,10 @@ public class Simulation_1{
 
 				if(sim.breedable(tempCreature1, tempCreature2) && tempCreature1.getHungerRatio() > .2 && tempCreature2.getHungerRatio() > .2){	//If both creatures are compatible to breed and not starving
 						if(activityLog) System.out.println("Tick #" + step + "_ " + tempCreature1.getGeneticCode() + " and " + tempCreature2.getGeneticCode() + " breed.");
-					tempCreature1.xpGain(tempCreature2.getLevel() * tempCreature2.sumGenes());	//Gain XP
+					tempCreature1.xpGain(tempCreature2.getLevel() * tempCreature2.getGeneSum());	//Gain XP
 					if(!sim.RIP(tempCreature1)) creatures.add(tempCreature1);					//Add creature back into the main List if it isn't set to die
 
-					tempCreature2.xpGain(tempCreature1.getLevel() * tempCreature1.sumGenes());	//Gain XP
+					tempCreature2.xpGain(tempCreature1.getLevel() * tempCreature1.getGeneSum());	//Gain XP
 					if(!sim.RIP(tempCreature2)) creatures.add(tempCreature2);					//Add creature back into the main List if it isn't set to die
 
 					creatures.add(new Creature(tempCreature1, tempCreature2, step));					//Add the offspring of the pair to the list
